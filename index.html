@@ -104,6 +104,8 @@ footer{text-align:center;color:#566377;font-size:11px;margin-top:18px;letter-spa
 <footer>ANDRAGOPS Académie · Strasbourg · andragops-academie.fr — « Le jeu ouvre les yeux ; la formation sauve. »</footer></div>
 <script>
 var CONTACT="info@andragops-academie.fr";
+var API="https://eumviuptmyzgftrqpape.supabase.co/functions/v1/bouclier";
+var GAMEOPEN=true;
 var S=[
 {tag:"CHAP. 1 · SÛRETÉ",cls:"seod",type:"e",theme:"seod",titre:"Le cadre légal",scene:"Énigme : le cadre légal de votre activité d'agent de sécurité privée est fixé par…",b:["Le Livre VI du Code de la sécurité intérieure"],p:["Le Code de la route","Le règlement intérieur de la personne protégée","Le Code de la santé publique"]},
 {tag:"CHAP. 1 · SÛRETÉ",cls:"seod",type:"e",theme:"seod",titre:"La légitime défense",scene:"Énigme : les trois conditions cumulatives de la légitime défense (art. 122-5 CP) sont…",b:["Actualité, nécessité, proportionnalité"],p:["Soudaineté, surprise, riposte","Gravité, intention, préméditation","Discrétion, loyauté, dignité"]},
@@ -138,6 +140,7 @@ function be(s){return String(s==null?'':s).replace(/[&<>]/g,function(c){return c
 function hideSplash(){var s=$('splash');if(s){s.classList.add('out');setTimeout(function(){s.style.display='none'},800)}}
 setTimeout(hideSplash,4600);
 function launch(){
+  if(GAMEOPEN===false){alert("Le jeu est fermé pour le moment. Reviens quand ANDRAGOPS l'aura rouvert. 🔒");return;}
   PR=($('prenom').value||'').trim();NOM=($('nom').value||'').trim();
   if(!PR||!NOM){alert("Entrez votre prénom ET votre nom pour démarrer.");$(PR?'nom':'prenom').focus();return;}
   SV=($('service').value||'').trim();SSTU=$('sst').value;
@@ -191,6 +194,7 @@ function submitChoices(){
   var wants=[];if($('w_seod').checked)wants.push('SEOD Close Protect');if($('w_sst').checked)wants.push('SST');if($('w_mac').checked)wants.push('MAC SST');if($('w_inc').checked)wants.push('Sécurité Incendie EPI 7h');
   var obs=($('obs').value||'').trim();
   try{var sk='andragops_bouclier_scores';var sa=JSON.parse(localStorage.getItem(sk)||'[]');for(var si=sa.length-1;si>=0;si--){if(sa[si].id===window.LREC_ID){sa[si].wants=wants.join(', ');sa[si].obs=obs;break;}}localStorage.setItem(sk,JSON.stringify(sa));}catch(e){}
+  try{fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({prenom:PR,nom:NOM,service:SV,sst:SSTU,score:LSCORE,badge:LBADGE,fini:LFINI,erreurs:erreurs,bonnes:bonnes,total:S.length,e_seod:et.seod,e_sst:et.sst,e_inc:et.incendie,wants:wants.join(', '),observation:obs})}).catch(function(){});}catch(e){}
   var body="Bonjour ANDRAGOPS,%0D%0A%0D%0A"
     +"Suite au jeu OPÉRATION BOUCLIER, voici mes informations :%0D%0A"
     +"- Nom : "+encodeURIComponent(NOM)+"%0D%0A- Prénom : "+encodeURIComponent(PR)+"%0D%0A"
@@ -211,11 +215,14 @@ function submitChoices(){
    +"<div class='cta'>« Le jeu ouvre les yeux ; la formation, sur le terrain comme en salle, sauve des vies. »</div>"
    +"<div style='margin-top:14px'><button class='big ghost' onclick='showBoard()'>🏆 Voir le classement</button></div>";
 }
-function showBoard(){var ov=$('board');ov.classList.remove('hide');var L=$('boardList');
-  var rows=[];try{rows=JSON.parse(localStorage.getItem('andragops_bouclier_scores')||'[]');}catch(e){}
-  if(!rows.length){L.innerHTML="<p style='color:#aaa'>Personne n'a encore joué sur ce poste. Soyez le premier !</p>";return;}
+function renderBoard(rows){var L=$('boardList');
+  if(!Array.isArray(rows)||!rows.length){L.innerHTML="<p style='color:#aaa'>Personne n'a encore joué. Sois le premier !</p>";return;}
   rows=rows.slice().sort(function(a,b){return (b.score||0)-(a.score||0)});
   var med=["🥇","🥈","🥉"];
   L.innerHTML=rows.slice(0,15).map(function(r,i){return "<div class='brow'><span class='brank'>"+(i<3?med[i]:(i+1))+"</span><b style='flex:1'>"+be(r.prenom||'(agent)')+(r.service?" <span style='color:#888;font-weight:400'>· "+be(r.service)+"</span>":"")+"</b><span class='bscore'>"+(r.score||0)+" pts</span></div>"}).join("");}
+function showBoard(){var ov=$('board');ov.classList.remove('hide');$('boardList').innerHTML='Chargement…';
+  fetch(API+"?board=1&z="+Date.now()).then(function(r){return r.json()}).then(function(rows){renderBoard(rows);}).catch(function(){var loc=[];try{loc=JSON.parse(localStorage.getItem('andragops_bouclier_scores')||'[]');}catch(e){}renderBoard(loc);});}
 function closeBoard(){$('board').classList.add('hide');}
+function gameClosed(){var i=$('intro');if(i){i.innerHTML="<img class='brand' src='logo.png' alt='ANDRAGOPS'><span class='tag'>JEU FERMÉ</span><h1>Le jeu n'est pas ouvert pour le moment</h1><p>OPÉRATION BOUCLIER est actuellement fermé par ANDRAGOPS Académie. Reviens un peu plus tard. 🔒</p>";}}
+fetch(API+"?state=1&z="+Date.now()).then(function(r){return r.json()}).then(function(j){if(j&&j.open===false){GAMEOPEN=false;gameClosed();}}).catch(function(){});
 </script></body></html>

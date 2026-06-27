@@ -45,12 +45,15 @@ tr:nth-child(even) td{background:#faf8f3}
   <img src="logo.png" alt="ANDRAGOPS">
   <div class="htxt"><h1>Tableau de bord formateur — OPÉRATION BOUCLIER</h1><p>Suivi des parties jouées · ANDRAGOPS Académie</p></div>
 </header>
-<div class="note">📍 Ce tableau lit les parties enregistrées <b>sur ce poste / navigateur</b> (jeu autonome, sans serveur central). Pour un suivi centralisé en direct de tous les joueurs, un backend est nécessaire (option à activer). Ouvrez cette page sur le même appareil que celui où le jeu a été joué.</div>
+<div class="note" id="modeNote"></div>
 <div class="toolbar">
-  <button class="btn" onclick="location.reload()">🔄 Rafraîchir</button>
+  <button class="btn" onclick="refresh()">🔄 Rafraîchir</button>
+  <button class="btn ghost" onclick="connect()" id="btnConnect">🔑 Connexion formateur (live)</button>
   <button class="btn ghost" onclick="exportCSV()">⬇️ Exporter CSV</button>
   <button class="btn ghost" onclick="window.print()">🖨️ Imprimer / PDF</button>
-  <button class="btn dgr" onclick="clearData()">🗑️ Effacer les données</button>
+  <button class="btn ghost" id="btnOpen" onclick="toggleGame('open')" style="display:none">🟢 Ouvrir le jeu</button>
+  <button class="btn dgr" id="btnClose" onclick="toggleGame('closed')" style="display:none">🔴 Fermer le jeu</button>
+  <button class="btn dgr" onclick="clearData()" id="btnClear">🗑️ Effacer (local)</button>
 </div>
 <div id="content"></div>
 <div class="foot">ANDRAGOPS Académie · 07 59 73 82 72 · info@andragops-academie.fr · andragops-academie.fr</div>
@@ -59,7 +62,11 @@ var KEY='andragops_bouclier_scores';
 function load(){try{return JSON.parse(localStorage.getItem(KEY)||'[]');}catch(e){return[];}}
 function be(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
 function fdate(iso){try{var d=new Date(iso);return d.toLocaleDateString('fr-FR')+' '+d.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});}catch(e){return be(iso);}}
+var API="https://eumviuptmyzgftrqpape.supabase.co/functions/v1/bouclier";
+var TOKEN=localStorage.getItem('andragops_bouclier_admin')||'';
+var MODE='local';
 var rows=load();var sortKey='date',sortDir=-1;
+function norm(a){return (a||[]).map(function(r){return {date:r.created_at||r.date,prenom:r.prenom,nom:r.nom,service:r.service,sst:r.sst,score:r.score,badge:r.badge,fini:r.fini,erreurs:r.erreurs,bonnes:r.bonnes,total:r.total,e_seod:r.e_seod,e_sst:r.e_sst,e_inc:r.e_inc,wants:r.wants,obs:(r.obs!=null?r.obs:r.observation)};});}
 function render(){
   var c=document.getElementById('content');
   if(!rows.length){c.innerHTML="<div class='empty'>Aucune partie enregistrée sur ce poste pour l'instant.<br>Lancez une partie depuis le jeu, puis revenez ici.</div>";return;}
@@ -104,6 +111,11 @@ function exportCSV(){
   var blob=new Blob([csv],{type:'text/csv;charset=utf-8;'});var url=URL.createObjectURL(blob);
   var a=document.createElement('a');a.href=url;a.download='OPERATION-BOUCLIER_parties_'+new Date().toISOString().slice(0,10)+'.csv';document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(url);
 }
-function clearData(){if(confirm('Effacer DÉFINITIVEMENT toutes les parties enregistrées sur ce poste ? Pensez à exporter le CSV avant.')){localStorage.removeItem(KEY);rows=[];render();}}
-render();
+function clearData(){if(confirm('Effacer DÉFINITIVEMENT les parties enregistrées EN LOCAL sur ce poste ? (Le serveur live n\'est pas affecté.) Pensez à exporter le CSV avant.')){localStorage.removeItem(KEY);if(MODE!=='live'){rows=[];render();}}}
+function setNote(){var n=document.getElementById('modeNote');if(MODE==='live'){n.innerHTML="🟢 <b>Mode live</b> — données centralisées de tous les appareils (serveur ANDRAGOPS) · <b>"+rows.length+"</b> partie(s) enregistrée(s).";document.getElementById('btnConnect').style.display='none';document.getElementById('btnOpen').style.display='';document.getElementById('btnClose').style.display='';document.getElementById('btnClear').style.display='none';}else{n.innerHTML="📍 <b>Mode local</b> — parties de ce poste uniquement. Cliquez sur <b>Connexion formateur (live)</b> et entrez votre code pour suivre les parties de <b>tous les appareils</b> en direct.";document.getElementById('btnConnect').style.display='';document.getElementById('btnOpen').style.display='none';document.getElementById('btnClose').style.display='none';document.getElementById('btnClear').style.display='';}}
+function loadLive(cb){fetch(API+'?admin=1&key='+encodeURIComponent(TOKEN)+'&z='+Date.now()).then(function(r){if(r.status===401)throw new Error('auth');return r.json();}).then(function(d){if(!Array.isArray(d))throw new Error('bad');rows=norm(d);MODE='live';if(cb)cb(true);}).catch(function(e){if(cb)cb(false,e);});}
+function connect(){var t=prompt('Code formateur ANDRAGOPS :',TOKEN||'');if(t==null)return;TOKEN=(t||'').trim();localStorage.setItem('andragops_bouclier_admin',TOKEN);loadLive(function(ok){if(!ok){alert('Code incorrect ou serveur indisponible. Le tableau reste en mode local.');return;}setNote();render();});}
+function refresh(){if(MODE==='live'||TOKEN){loadLive(function(ok){if(!ok){rows=load();MODE='local';}setNote();render();});}else{rows=load();setNote();render();}}
+function toggleGame(st){if(!TOKEN){alert('Connecte-toi d\'abord via Connexion formateur.');return;}if(!confirm(st==='closed'?'Fermer le jeu pour tous les joueurs ?':'Rouvrir le jeu pour tous les joueurs ?'))return;fetch(API+'?toggle='+st+'&key='+encodeURIComponent(TOKEN)+'&z='+Date.now()).then(function(r){return r.json();}).then(function(j){alert(j&&j.open===true?'✅ Jeu OUVERT pour tous.':(j&&j.open===false?'🔴 Jeu FERMÉ pour tous.':'Action effectuée.'));}).catch(function(){alert('Échec — vérifie ta connexion / ton code.');});}
+if(TOKEN){loadLive(function(ok){if(!ok){rows=load();MODE='local';}setNote();render();});}else{setNote();render();}
 </script></body></html>
