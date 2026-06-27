@@ -76,20 +76,20 @@ function render(){
   var fini=rows.filter(function(r){return r.fini;}).length;
   var bc={Or:0,Argent:0,Bronze:0,Interrompu:0};rows.forEach(function(r){if(bc[r.badge]!=null)bc[r.badge]++;});
   var eS=0,eT=0,eI=0;rows.forEach(function(r){eS+=(+r.e_seod||0);eT+=(+r.e_sst||0);eI+=(+r.e_inc||0);});
-  var wc={'SEOD Close Protect':0,'SST':0,'MAC SST':0,'Sécurité Incendie EPI 7h':0};
+  var wc={'SST':0,'MAC SST':0,'Gestes & Postures':0,'Sécurité Incendie EPI 7h':0};
   rows.forEach(function(r){(r.wants||'').split(',').forEach(function(w){w=w.trim();if(wc[w]!=null)wc[w]++;});});
-  var maxE=Math.max(1,eS,eT,eI),maxW=Math.max(1,wc['SEOD Close Protect'],wc['SST'],wc['MAC SST'],wc['Sécurité Incendie EPI 7h']);
+  var maxE=Math.max(1,eS,eT,eI),maxW=Math.max(1,wc['SST'],wc['MAC SST'],wc['Gestes & Postures'],wc['Sécurité Incendie EPI 7h']);
   function bar(lab,val,max,col){return "<div class='barrow'><span class='lab'>"+lab+"</span><span class='barwrap'><i style='width:"+Math.round(val/max*100)+"%;background:"+col+"'></i></span><span class='val'>"+val+"</span></div>";}
   var html="<div class='cards'>"
    +kpi(n,'Parties jouées','')+kpi(avg+' pts','Score moyen','')+kpi(best+' pts','Meilleur score','or')
    +kpi(Math.round(fini/n*100)+'%','Missions terminées','')+kpi(bc.Or,'Badges Or','or')+"</div>";
   html+="<div class='grid2'>";
   html+="<div class='panel'><h2>Où la cohorte pèche (erreurs cumulées)</h2>"
-    +bar('Sûreté / SEOD',eS,maxE,'#0F2D4B')+bar('Secours / SST',eT,maxE,'#C00000')+bar('Incendie / EPI',eI,maxE,'#b3700f')
+    +bar('Hémorragie & garrot',eS,maxE,'#C00000')+bar('Voies aériennes & MARCHE',eT,maxE,'#0F2D4B')+bar('Extraction & alerte',eI,maxE,'#b3700f')
     +"<p style='color:#7b8798;font-size:12px;margin-top:6px'>Plus la barre est longue, plus la formation correspondante est à prioriser.</p></div>";
   html+="<div class='panel'><h2>Formations demandées (volontaires)</h2>"
-    +bar('SEOD Close Protect',wc['SEOD Close Protect'],maxW,'#0F2D4B')+bar('SST',wc['SST'],maxW,'#C00000')
-    +bar('MAC SST',wc['MAC SST'],maxW,'#1F4E79')+bar('Incendie EPI 7h',wc['Sécurité Incendie EPI 7h'],maxW,'#b3700f')
+    +bar('SST',wc['SST'],maxW,'#C00000')+bar('MAC SST',wc['MAC SST'],maxW,'#1F4E79')
+    +bar('Gestes & Postures',wc['Gestes & Postures'],maxW,'#2E6B3E')+bar('Incendie EPI 7h',wc['Sécurité Incendie EPI 7h'],maxW,'#b3700f')
     +"<p style='color:#7b8798;font-size:12px;margin-top:6px'>Badges : Or "+bc.Or+" · Argent "+bc.Argent+" · Bronze "+bc.Bronze+" · Interrompu "+bc.Interrompu+"</p></div>";
   html+="</div>";
   var sorted=rows.slice().sort(function(a,b){var x=a[sortKey],y=b[sortKey];if(sortKey==='score'){x=+x||0;y=+y||0;}else{x=String(x||'');y=String(y||'');}return x<y?-sortDir:x>y?sortDir:0;});
@@ -103,7 +103,7 @@ function sortBy(k){if(sortKey===k){sortDir=-sortDir;}else{sortKey=k;sortDir=(k==
 function exportCSV(){
   if(!rows.length){alert('Aucune donnée à exporter.');return;}
   var cols=['date','prenom','nom','service','sst','score','badge','fini','erreurs','bonnes','total','e_seod','e_sst','e_inc','wants','obs'];
-  var head=['Date','Prenom','Nom','Societe','DejaSST','Score','Badge','MissionTerminee','Erreurs','BonnesEtapes','Total','Err_SEOD','Err_SST','Err_Incendie','FormationsSouhaitees','Observation'];
+  var head=['Date','Prenom','Nom','Societe','DejaSST','Score','Badge','MissionTerminee','Erreurs','BonnesEtapes','Total','Err_Hemorragie','Err_VoiesAeriennes','Err_Extraction','FormationsSouhaitees','Observation'];
   function esc(v){v=String(v==null?'':v);return '"'+v.replace(/"/g,'""')+'"';}
   var lines=[head.map(esc).join(';')];
   rows.slice().sort(function(a,b){return new Date(b.date)-new Date(a.date);}).forEach(function(r){lines.push(cols.map(function(k){return esc(r[k]);}).join(';'));});

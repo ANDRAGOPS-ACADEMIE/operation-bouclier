@@ -54,21 +54,21 @@ footer{text-align:center;color:#566377;font-size:11px;margin-top:18px;letter-spa
 .brow{display:flex;align-items:center;gap:12px;padding:11px 12px;border-bottom:1px solid var(--line)}
 .brank{font-family:'Rajdhani';color:var(--o);font-weight:700;min-width:34px;font-size:18px}.bscore{font-family:'Rajdhani';color:#9ff0bd;font-weight:700;white-space:nowrap;letter-spacing:.5px}
 </style></head><body>
-<div id="splash" onclick="hideSplash()"><img src="logo.png" alt="ANDRAGOPS"><div class="stitle">OPÉRATION <b>BOUCLIER</b></div><div class="stag">Sûreté · Secours tactique · Incendie — Gardez la maîtrise, protégez, secourez.</div><button class="skip" onclick="hideSplash()">Commencer ▶</button></div>
+<div id="splash" onclick="hideSplash()"><img src="logo.png" alt="ANDRAGOPS"><div class="stitle">OPÉRATION <b>BOUCLIER</b></div><div class="stag">Les gestes qui sauvent en situation dégradée — stoppez l'hémorragie, gardez votre sang-froid, alertez.</div><button class="skip" onclick="hideSplash()">Commencer ▶</button></div>
 <div class="app">
 <header><div class="logo">OPÉRATION <span>BOUCLIER</span></div><div class="hud"><span id="score" class="score hide">0 pts</span><div id="chrono" class="chrono hide">--:--</div></div></header>
 
 <div id="intro" class="card"><img class="brand" src="logo.png" alt="ANDRAGOPS Académie">
-<span class="tag">SERIOUS GAME PRÉVENTION · SÛRETÉ & SECOURS · INDIVIDUEL</span>
-<h1>Mission en cours — un blessé, une menace, un départ de feu…</h1>
-<p class="pitch">Vous êtes l'agent désigné sur le terrain. La situation se dégrade : la personne protégée est exposée, un équipier saigne, l'alarme incendie retentit. Pas de panique : appliquez les bons protocoles — <b>SAS · SECOURS · POSE</b>, priorisation <b>MARCHE</b>, conduite à tenir SST et réflexes EPI — et gardez la <b>maîtrise</b> jusqu'à la fin du chrono.</p>
+<span class="tag">SERIOUS GAME · GESTES DE SECOURS TACTIQUE · INDIVIDUEL</span>
+<h1>Mission en cours — un blessé grave, chaque seconde compte…</h1>
+<p class="pitch">Un équipier s'effondre, ça saigne en abondance, la vie est en jeu. Vous êtes le <b>premier maillon</b> : appliquez les gestes de secours tactique — <b>stopper l'hémorragie</b>, garrot, priorisation <b>MARCHE</b>, libérer les voies aériennes, mettre à couvert et <b>alerter</b> — et gardez votre sang-froid jusqu'à la fin du chrono.</p>
 <p><b>Règle :</b> des situations à gérer et des énigmes à résoudre. Les bons réflexes rapportent des points ; une erreur coûte du temps. À la fin : votre badge, un mini-diagnostic, et vous choisissez les formations ANDRAGOPS qui vous intéressent.</p>
 <div class="row2">
 <div><label>Votre prénom</label><input id="prenom" placeholder="Prénom"></div>
 <div><label>Votre nom</label><input id="nom" placeholder="Nom"></div>
 </div>
 <div class="row2">
-<div><label>Société / unité (facultatif)</label><input id="service" placeholder="Ex : sûreté, A3P, accueil…"></div>
+<div><label>Société / service (facultatif)</label><input id="service" placeholder="Ex : production, accueil, équipe…"></div>
 <div><label>Êtes-vous déjà SST (sauveteur secouriste du travail) ?</label><select id="sst"><option value="non">Non, pas encore</option><option value="oui">Oui, déjà formé(e)</option></select></div>
 </div>
 <label>Durée de la partie (compte à rebours)</label>
@@ -85,9 +85,9 @@ footer{text-align:center;color:#566377;font-size:11px;margin-top:18px;letter-spa
 <div id="choix" class="card hide">
 <h2>🎓 Quelles formations vous intéressent ?</h2>
 <p style="color:#bbb">Cochez ce qui vous intéresse — les cases conseillées par votre diagnostic sont déjà pré-cochées, à vous d'ajuster. Vos choix seront transmis à ANDRAGOPS Académie.</p>
-<label class="ck" id="ck_seod"><input type="checkbox" id="w_seod"><span><b>SEOD Close Protect</b> — secours tactique en environnement dégradé (14h)</span></label>
 <label class="ck" id="ck_sst"><input type="checkbox" id="w_sst"><span><b>SST</b> — Sauveteur Secouriste du Travail (14h)</span></label>
 <label class="ck" id="ck_mac"><input type="checkbox" id="w_mac"><span><b>MAC SST</b> — recyclage SST (7h, si déjà formé)</span></label>
+<label class="ck" id="ck_gp"><input type="checkbox" id="w_gp"><span><b>Gestes & Postures</b> — prévention des TMS / port de charge (7h)</span></label>
 <label class="ck" id="ck_inc"><input type="checkbox" id="w_inc"><span><b>Sécurité Incendie EPI</b> — Équipier de Première Intervention (7h)</span></label>
 <label style="margin-top:8px">Une observation ? (disponibilités, questions, créneau…)</label>
 <textarea id="obs" rows="3" placeholder="Optionnel — un mot pour ANDRAGOPS"></textarea>
@@ -95,8 +95,8 @@ footer{text-align:center;color:#566377;font-size:11px;margin-top:18px;letter-spa
 <div id="sendfb" class="fb hide"></div></div>
 
 <div id="board" class="ov hide"><div class="ov-card">
-<h2 style="color:var(--o)">🏆 Classement (cet appareil)</h2>
-<p style="color:#aaa;font-size:13px;margin-bottom:8px">Les meilleurs sang-froid enregistrés sur ce poste.</p>
+<h2 style="color:var(--o)">🏆 Classement en direct</h2>
+<p style="color:#aaa;font-size:13px;margin-bottom:8px">Les meilleurs sang-froid, tous appareils confondus.</p>
 <div id="boardList">Chargement…</div>
 <button class="big" style="margin-top:14px" onclick="closeBoard()">← Retour</button>
 </div></div>
@@ -107,32 +107,32 @@ var CONTACT="info@andragops-academie.fr";
 var API="https://eumviuptmyzgftrqpape.supabase.co/functions/v1/bouclier";
 var GAMEOPEN=true;
 var S=[
-{tag:"CHAP. 1 · SÛRETÉ",cls:"seod",type:"e",theme:"seod",titre:"Le cadre légal",scene:"Énigme : le cadre légal de votre activité d'agent de sécurité privée est fixé par…",b:["Le Livre VI du Code de la sécurité intérieure"],p:["Le Code de la route","Le règlement intérieur de la personne protégée","Le Code de la santé publique"]},
-{tag:"CHAP. 1 · SÛRETÉ",cls:"seod",type:"e",theme:"seod",titre:"La légitime défense",scene:"Énigme : les trois conditions cumulatives de la légitime défense (art. 122-5 CP) sont…",b:["Actualité, nécessité, proportionnalité"],p:["Soudaineté, surprise, riposte","Gravité, intention, préméditation","Discrétion, loyauté, dignité"]},
-{tag:"CHAP. 1 · DOCTRINE",cls:"seod",type:"e",theme:"seod",titre:"L'algorithme signature",scene:"Énigme : l'algorithme signature ANDRAGOPS qui structure l'intervention est…",b:["SAS — SECOURS — POSE"],p:["ABC — DEF — GHI","STOP — GO — WAIT","Voir — Juger — Agir"]},
-{tag:"CHAP. 1 · L'AGRESSION",cls:"seod",type:"s",theme:"seod",titre:"La personne protégée est attaquée",scene:"En déplacement, un individu agresse la personne protégée à l'arme blanche. Un agent de flanc est blessé : plaie hémorragique à la cuisse. La personne protégée est indemne mais figée. Vos réflexes, dans le bon ordre ?",b:["Écarter la menace puis COUVRIR et EXTRAIRE la personne protégée d'abord","Mettre le blessé à couvert (drag) avant de le soigner","Poser un garrot tactique en moins de 60 s et noter l'heure","Donner l'alerte structurée (15 / 17)"],p:["Se précipiter sur le blessé en laissant la personne protégée exposée","Soigner sur place, à découvert, sans extraire personne"]},
-{tag:"ÉNIGME · MARCHE",cls:"seod",type:"e",theme:"seod",titre:"La priorité vitale",scene:"Énigme : la priorisation MARCHE du secours tactique commence par…",b:["L'hémorragie massive (M)"],p:["Les voies aériennes (A)","La respiration (R)","L'évacuation"]},
-{tag:"ÉNIGME · ÉQUIPE",cls:"seod",type:"e",theme:"seod",titre:"Le réflexe d'équipe",scene:"Énigme : face à un blessé sous menace, le réflexe d'équipe en 4 temps est…",b:["Couvrir — Extraire — Soigner — Alerter"],p:["Voir — Juger — Agir — Partir","Courir — Crier — Cacher — Combattre","Stopper — Trier — Évacuer — Partir"]},
-{tag:"CHAP. 2 · LE GARROT",cls:"seod",type:"e",theme:"seod",titre:"Délai de pose",scene:"Énigme : un garrot tactique sur une hémorragie de membre doit être posé en moins de…",b:["60 secondes"],p:["10 secondes","5 minutes","15 minutes"]},
-{tag:"CHAP. 2 · LE GARROT",cls:"seod",type:"e",theme:"seod",titre:"Après la pose",scene:"Énigme : une fois le garrot posé et l'hémorragie stoppée, il faut impérativement…",b:["Noter l'heure de pose"],p:["Le desserrer toutes les 10 minutes","Le retirer dès que possible soi-même","Le recouvrir pour le cacher"]},
-{tag:"CHAP. 2 · THORAX",cls:"seod",type:"s",theme:"seod",titre:"Plaie thoracique soufflante",scene:"Un agent présente une plaie au thorax qui « aspire » l'air (pneumothorax ouvert) et respire difficilement. Conduite à tenir ?",b:["Poser un pansement 3 côtés sur la plaie","Installer le blessé en position demi-assise","Surveiller la respiration et alerter le 15"],p:["Boucher hermétiquement la plaie sur les 4 côtés","Allonger le blessé totalement à plat et le faire boire"]},
-{tag:"CHAP. 3 · MULTI-VICTIMES",cls:"seod",type:"s",theme:"seod",titre:"Mouvement de foule sur site",scene:"Bousculade sur un site accueillant du public : plusieurs victimes. L'une crie très fort, une autre saigne abondamment d'un membre, une autre est inconsciente mais respire. Comment gérez-vous ?",b:["Traiter en priorité l'hémorragie massive (garrot)","Réaliser un tri rapide (la plus bruyante n'est pas la plus grave)","Créer un point de regroupement et transmettre un bilan hiérarchisé"],p:["S'occuper d'abord de la victime qui crie le plus fort","Traiter les victimes au hasard sans point de regroupement"]},
-{tag:"ÉNIGME · RCP TACTIQUE",cls:"seod",type:"e",theme:"seod",titre:"Quand masser ?",scene:"Énigme : en contexte SEOD Close Protect, la RCP (massage cardiaque) se pratique…",b:["Uniquement en zone sûre, jamais sous menace active"],p:["Sous menace active, sans attendre","Pendant l'extraction du blessé","Jamais, en aucun cas"]},
-{tag:"ÉNIGME · SURVIE",cls:"seod",type:"e",theme:"seod",titre:"La couverture de survie",scene:"Énigme : pour protéger un blessé du froid (lutte contre l'hypothermie), la couverture de survie se pose…",b:["Côté argenté contre le corps"],p:["Côté doré contre le corps","Peu importe le côté","Sur le sol uniquement"]},
-{tag:"CHAP. SST · PROTÉGER",cls:"sst",type:"s",theme:"sst",titre:"Un collègue au sol près d'une machine",scene:"Vous arrivez : un collègue est au sol, à côté d'une machine encore en marche. Quels sont les bons réflexes, et dans quel ordre ?",b:["Identifier puis supprimer ou isoler le danger persistant","Si on ne peut pas supprimer le danger, soustraire la victime sans s'exposer","Examiner la victime ensuite (Saigne, S'étouffe, Répond, Respire)"],p:["Se précipiter pour examiner la victime sans sécuriser","Commencer une RCP immédiatement sans couper la machine"]},
-{tag:"ÉNIGME · EXAMEN",cls:"sst",type:"e",theme:"sst",titre:"Dans le bon ordre",scene:"Énigme : lors de l'examen d'une victime, le SST recherche les détresses vitales dans l'ordre…",b:["Saigne → S'étouffe → Répond → Respire"],p:["Conscience → Respiration → Circulation → Hémorragie","Respiration → Conscience → Pouls"]},
-{tag:"ÉNIGME · RCP",cls:"sst",type:"e",theme:"sst",titre:"Le bon rythme",scene:"Énigme : RCP d'un adulte par un secouriste — quel rythme et quel ratio ?",b:["100 à 120 compressions/min — 30 compressions / 2 insufflations"],p:["60 compressions/min — ratio 15/2","80 compressions/min en continu, sans insufflation","100/min — ratio 5/1"]},
-{tag:"ÉNIGME · ÉTOUFFEMENT",cls:"sst",type:"e",theme:"sst",titre:"Obstruction totale",scene:"Énigme : un adulte présente une obstruction TOTALE des voies aériennes (ne parle plus, ne tousse plus). La séquence INRS est…",b:["5 claques dorsales, puis si échec 5 compressions abdominales (Heimlich), en alternance"],p:["5 insufflations bouche-à-bouche immédiates","Allonger la personne et faire une RCP","Lui faire boire un verre d'eau"]},
-{tag:"ÉNIGME · INCENDIE",cls:"inc",type:"e",theme:"incendie",titre:"Le triangle du feu",scene:"Énigme : les trois éléments indispensables au feu (triangle du feu) sont…",b:["Combustible, comburant et énergie d'activation (chaleur)"],p:["Fumée, chaleur et lumière","Eau, air et électricité","Papier, bois et plastique"]},
-{tag:"ÉNIGME · CLASSES DE FEU",cls:"inc",type:"e",theme:"incendie",titre:"La classe F",scene:"Énigme : la classe de feu F désigne…",b:["Les feux d'huiles et de graisses végétales ou animales"],p:["Les feux de gaz","Les feux de métaux","Les feux de liquides inflammables"]},
-{tag:"CHAP. EPI · FRITEUSE",cls:"inc",type:"s",theme:"incendie",titre:"Feu de friteuse",scene:"Dans une cuisine, l'huile chaude d'une friteuse s'enflamme (feu de classe F). Que faites-vous ?",b:["Utiliser un extincteur spécifique classe F, ou une couverture anti-feu","Couper l'énergie si c'est possible sans risque, et donner l'alerte"],p:["Jeter de l'eau sur l'huile en feu","Projeter du CO2 violemment sur l'huile (risque de projection)"]},
-{tag:"CHAP. FINAL · EPI",cls:"inc",type:"s",theme:"incendie",titre:"Feu de tableau électrique",scene:"L'alarme retentit. À l'étage, un feu se déclare sur un tableau électrique et la fumée envahit le couloir. Conduite à tenir d'EPI ?",b:["Couper le courant AVANT toute action (jamais d'eau sur une installation sous tension)","Donner l'alerte (déclencheur manuel + 18/112) et faire évacuer","Si maîtrisable et sécurisé : extincteur CO2 ou poudre, méthode P.A.S.S. ; sinon repli"],p:["Jeter de l'eau sur le tableau électrique sous tension","Prendre l'ascenseur pour évacuer plus vite"]}
+{tag:"HÉMORRAGIE · GARROT",cls:"sst",type:"e",theme:"seod",titre:"Délai de pose",scene:"Énigme : un garrot tactique sur une hémorragie de membre doit être posé en moins de…",b:["60 secondes"],p:["10 secondes","5 minutes","15 minutes"]},
+{tag:"HÉMORRAGIE · GARROT",cls:"sst",type:"e",theme:"seod",titre:"Après la pose",scene:"Énigme : une fois le garrot posé et l'hémorragie stoppée, il faut impérativement…",b:["Noter l'heure de pose"],p:["Le desserrer toutes les 10 minutes","Le retirer dès que possible soi-même","Le recouvrir pour le cacher"]},
+{tag:"HÉMORRAGIE · GARROT",cls:"sst",type:"s",theme:"seod",titre:"Hémorragie qui ne s'arrête pas",scene:"Un équipier saigne abondamment de l'avant-bras ; la compression directe maintenue ne suffit pas. Conduite à tenir ?",b:["Poser un garrot tourniquet (type CAT) en amont de la plaie","Serrer jusqu'à l'arrêt complet du saignement","Noter l'heure de pose et surveiller le blessé"],p:["Continuer la compression et simplement attendre les secours","Desserrer le garrot toutes les 10 minutes"]},
+{tag:"HÉMORRAGIE · GARROT",cls:"sst",type:"e",theme:"seod",titre:"Le bon emplacement",scene:"Énigme : un garrot tourniquet se pose…",b:["En amont de la plaie (côté cœur), serré jusqu'à l'arrêt du saignement"],p:["Directement sur la plaie","En aval de la plaie","Le plus bas possible sur le membre"]},
+{tag:"HÉMORRAGIE · PANSEMENTS",cls:"sst",type:"e",theme:"seod",titre:"Le pansement hémostatique",scene:"Énigme : le pansement hémostatique est surtout indiqué pour…",b:["Une hémorragie de jonction non garrotable (aine, aisselle, cou)"],p:["Une plaie superficielle","Une brûlure","Une fracture fermée"]},
+{tag:"HÉMORRAGIE · SELF-AID",cls:"sst",type:"e",theme:"seod",titre:"Se sauver soi-même",scene:"Énigme : en self-aid (secours sur soi-même), vous devez savoir poser un garrot…",b:["À une seule main, sur vous-même"],p:["À deux mains uniquement","Seulement avec l'aide d'un collègue","Seulement sur un mannequin"]},
+{tag:"HÉMORRAGIE · BILAN",cls:"sst",type:"e",theme:"seod",titre:"La triade létale",scene:"Énigme : chez un blessé grave, la triade létale à combattre associe…",b:["Hypothermie, acidose, coagulopathie"],p:["Stress, fatigue, peur","Douleur, plaie, fracture","Faim, soif, froid"]},
+{tag:"MARCHE · PRIORITÉ",cls:"seod",type:"e",theme:"sst",titre:"La priorité vitale",scene:"Énigme : la priorisation MARCHE du secours tactique commence par…",b:["L'hémorragie massive (M)"],p:["Les voies aériennes (A)","La respiration (R)","L'évacuation"]},
+{tag:"RESPIRATION · THORAX",cls:"seod",type:"s",theme:"sst",titre:"Plaie thoracique soufflante",scene:"Un blessé présente une plaie au thorax qui « aspire » l'air (pneumothorax ouvert) et respire difficilement. Conduite à tenir ?",b:["Poser un pansement 3 côtés sur la plaie","Installer le blessé en position demi-assise","Surveiller la respiration et alerter le 15"],p:["Boucher hermétiquement la plaie sur les 4 côtés","Allonger le blessé totalement à plat et le faire boire"]},
+{tag:"VOIES AÉRIENNES",cls:"seod",type:"e",theme:"sst",titre:"Obstruction totale",scene:"Énigme : un adulte présente une obstruction TOTALE des voies aériennes (ne parle plus, ne tousse plus). La séquence est…",b:["5 claques dorsales, puis si échec 5 compressions abdominales (Heimlich), en alternance"],p:["5 insufflations bouche-à-bouche immédiates","Allonger la personne et faire une RCP","Lui faire boire un verre d'eau"]},
+{tag:"RCP",cls:"seod",type:"e",theme:"sst",titre:"Le bon rythme",scene:"Énigme : RCP d'un adulte — quel rythme et quel ratio ?",b:["100 à 120 compressions/min — 30 compressions / 2 insufflations"],p:["60 compressions/min — ratio 15/2","80 compressions/min en continu, sans insufflation","100/min — ratio 5/1"]},
+{tag:"RCP TACTIQUE",cls:"seod",type:"e",theme:"sst",titre:"Quand masser ?",scene:"Énigme : en environnement tactique, la RCP (massage cardiaque) se pratique…",b:["Uniquement en zone sûre, jamais sous menace active"],p:["Sous menace active, sans attendre","Pendant l'extraction du blessé","Jamais, en aucun cas"]},
+{tag:"HYPOTHERMIE",cls:"seod",type:"e",theme:"sst",titre:"La couverture de survie",scene:"Énigme : pour protéger un blessé du froid (lutte contre l'hypothermie), la couverture de survie se pose…",b:["Côté argenté contre le corps"],p:["Côté doré contre le corps","Peu importe le côté","Sur le sol uniquement"]},
+{tag:"DÉTRESSE RESPIRATOIRE",cls:"seod",type:"s",theme:"sst",titre:"Blessé qui respire mal",scene:"Un blessé conscient respire difficilement mais ne saigne pas. Que faites-vous en attendant les secours ?",b:["L'installer en position demi-assise","Surveiller en continu sa respiration et sa conscience","Donner l'alerte et le couvrir contre le froid"],p:["L'allonger totalement à plat sur le dos","Le faire marcher pour « le réveiller »"]},
+{tag:"ÉQUIPE · RÉFLEXE",cls:"inc",type:"e",theme:"incendie",titre:"Le réflexe d'équipe",scene:"Énigme : face à un blessé sous menace, le réflexe d'équipe en 4 temps est…",b:["Couvrir — Extraire — Soigner — Alerter"],p:["Voir — Juger — Agir — Partir","Courir — Crier — Cacher — Combattre","Stopper — Trier — Évacuer — Partir"]},
+{tag:"DOCTRINE",cls:"inc",type:"e",theme:"incendie",titre:"L'algorithme signature",scene:"Énigme : l'algorithme signature ANDRAGOPS qui structure l'intervention est…",b:["SAS — SECOURS — POSE"],p:["ABC — DEF — GHI","STOP — GO — WAIT","Voir — Juger — Agir"]},
+{tag:"EXTRACTION · MENACE",cls:"inc",type:"s",theme:"incendie",titre:"Blessé sous la menace",scene:"Un équipier est blessé (plaie hémorragique à la cuisse) dans une zone encore dangereuse. Vos réflexes, dans le bon ordre ?",b:["Écarter ou neutraliser la menace en priorité","Mettre le blessé à couvert (drag) avant de le soigner","Poser un garrot en moins de 60 s et noter l'heure","Donner l'alerte structurée (15 / 112)"],p:["Soigner sur place, à découvert, sans mettre à l'abri","Se précipiter sur le blessé sans sécuriser la zone"]},
+{tag:"MULTI-VICTIMES · TRI",cls:"inc",type:"s",theme:"incendie",titre:"Plusieurs blessés",scene:"Plusieurs victimes après un incident : l'une crie très fort, une autre saigne abondamment d'un membre, une autre est inconsciente mais respire. Comment gérez-vous ?",b:["Traiter en priorité l'hémorragie massive (garrot)","Réaliser un tri rapide (la plus bruyante n'est pas la plus grave)","Créer un point de regroupement et transmettre un bilan hiérarchisé"],p:["S'occuper d'abord de la victime qui crie le plus fort","Traiter les victimes au hasard, sans point de regroupement"]},
+{tag:"ALERTE",cls:"inc",type:"e",theme:"incendie",titre:"Le message d'alerte",scene:"Énigme : lors de l'alerte aux secours (15 / 112), vous devez notamment transmettre…",b:["Le nombre et l'état des victimes, et les gestes déjà réalisés"],p:["Uniquement votre numéro de téléphone","Votre opinion médicale sur le diagnostic","Une estimation du coût de l'intervention"]},
+{tag:"PASSATION",cls:"inc",type:"e",theme:"incendie",titre:"À l'arrivée des secours",scene:"Énigme : à l'arrivée des secours publics, vous devez…",b:["Faire une passation factuelle et remettre la fiche bilan"],p:["Poursuivre seul les soins en les ignorant","Quitter les lieux immédiatement","Communiquer l'information à la presse"]}
 ];
 var KO=["Aïe, ce n'était pas LE réflexe. −50 s ⏱️","Raté ! Le danger en profite. −50 s","Mauvaise pioche. −50 s","Oups, on apprend mais on perd 50 s 😅"];
 var OKL=["Bien joué ! 🎯","Sang-froid validé ✅","Réflexe de pro 👏","Impeccable.","Maîtrise totale 💪"];
 
 var t=540,T0=540,idx=0,faits=0,pts=0,erreurs=0,bonnes=0,et={seod:0,sst:0,incendie:0},timer=null,PR="",NOM="",SV="",SSTU="non",started=false;
-var LSCORE=0,LBADGE="",LFINI=false,recSEOD=false,recSST=false,recMAC=false,recINC=false;
+var LSCORE=0,LBADGE="",LFINI=false,recGP=false,recSST=false,recMAC=false,recINC=false;
 function $(i){return document.getElementById(i)}
 function fmt(s){if(s<0)s=0;var m=Math.floor(s/60),x=s%60;return (m<10?'0':'')+m+':'+(x<10?'0':'')+x}
 function rnd(a){return a[Math.floor(Math.random()*a.length)]}
@@ -169,36 +169,36 @@ function fin(){clearInterval(timer);$('game').classList.add('hide');$('intro').c
   LFINI=idx>=S.length;var bonus=Math.max(0,t);LSCORE=Math.max(0,pts+bonus);
   var medal,grade,col;
   if(!LFINI){medal='<svg width="62" height="62" viewBox="0 0 64 64" fill="none"><path d="M26 9h12M32 9v6" stroke="#C00000" stroke-width="3.4" stroke-linecap="round"/><circle cx="32" cy="36" r="17" stroke="#C00000" stroke-width="3.4"/><path d="M32 36V25M32 36l8 5" stroke="#C00000" stroke-width="3.4" stroke-linecap="round"/></svg>';grade='MISSION INTERROMPUE';col='#C00000';LBADGE='Interrompu';}
-  else if(erreurs<=2){medal='<svg width="64" height="64" viewBox="0 0 64 64" fill="none"><circle cx="32" cy="32" r="22" fill="#C9A66B"/><circle cx="32" cy="32" r="22" stroke="#0003" stroke-width="2"/><path d="M32 19l3.4 7 7.6 1-5.5 5.4 1.3 7.6-6.8-3.6-6.8 3.6 1.3-7.6-5.5-5.4 7.6-1z" fill="#fff"/></svg>';grade='BADGE OR — BOUCLIER D\'ÉLITE';col='#C9A66B';LBADGE='Or';}
+  else if(erreurs<=2){medal='<svg width="64" height="64" viewBox="0 0 64 64" fill="none"><circle cx="32" cy="32" r="22" fill="#C9A66B"/><circle cx="32" cy="32" r="22" stroke="#0003" stroke-width="2"/><path d="M32 19l3.4 7 7.6 1-5.5 5.4 1.3 7.6-6.8-3.6-6.8 3.6 1.3-7.6-5.5-5.4 7.6-1z" fill="#fff"/></svg>';grade='BADGE OR — MAÎTRISE ABSOLUE';col='#C9A66B';LBADGE='Or';}
   else if(erreurs<=5){medal='<svg width="64" height="64" viewBox="0 0 64 64" fill="none"><circle cx="32" cy="32" r="22" fill="#9aa3ad"/><circle cx="32" cy="32" r="22" stroke="#0003" stroke-width="2"/><path d="M32 19l3.4 7 7.6 1-5.5 5.4 1.3 7.6-6.8-3.6-6.8 3.6 1.3-7.6-5.5-5.4 7.6-1z" fill="#fff"/></svg>';grade='BADGE ARGENT — SOLIDE';col='#8a929c';LBADGE='Argent';}
   else{medal='<svg width="64" height="64" viewBox="0 0 64 64" fill="none"><circle cx="32" cy="32" r="22" fill="#cd7f32"/><circle cx="32" cy="32" r="22" stroke="#0003" stroke-width="2"/><path d="M32 19l3.4 7 7.6 1-5.5 5.4 1.3 7.6-6.8-3.6-6.8 3.6 1.3-7.6-5.5-5.4 7.6-1z" fill="#fff"/></svg>';grade='BADGE BRONZE — À CONSOLIDER';col='#cd7f32';LBADGE='Bronze';}
-  recSEOD=(et.seod>0);recSST=(et.sst>0&&SSTU==='non');recMAC=(et.sst>0&&SSTU==='oui');recINC=(et.incendie>0);
+  var anyErr=et.seod+et.sst+et.incendie;
+  recSST=(anyErr>0&&SSTU==='non');recMAC=(anyErr>0&&SSTU==='oui');recGP=false;recINC=false;
   var reco='';
-  if(recSEOD)reco+="<div class='reco'><b>Secours tactique / sûreté :</b> des réflexes ont manqué. → <b>SEOD Close Protect</b> — sauvetage en environnement opérationnel dégradé.</div>";
-  if(recMAC)reco+="<div class='reco'><b>Secourisme :</b> des gestes ont manqué. → <b>MAC SST</b> (recyclage des secouristes, tous les 24 mois).</div>";
-  else if(recSST)reco+="<div class='reco'><b>Secourisme :</b> des gestes ont manqué. → <b>SST</b> — Sauveteur Secouriste du Travail.</div>";
-  if(recINC)reco+="<div class='reco'><b>Incendie :</b> conduite à tenir à consolider. → <b>Sécurité Incendie EPI</b> (extincteurs & évacuation).</div>";
-  if(!reco)reco="<div class='reco'>Sans-faute, bravo ! Pour officialiser ces réflexes, le perfectionnement <b>SEOD Close Protect</b> et le <b>SST</b> sont la suite logique.</div>";
+  if(recMAC)reco+="<div class='reco'><b>Gestes vitaux :</b> des réflexes ont manqué. → <b>MAC SST</b> (recyclage des secouristes, tous les 24 mois).</div>";
+  else if(recSST)reco+="<div class='reco'><b>Gestes vitaux :</b> des réflexes ont manqué. → <b>SST</b> — Sauveteur Secouriste du Travail.</div>";
+  else reco+="<div class='reco'>Sans-faute, bravo ! Pour officialiser ces réflexes : "+(SSTU==='non'?"le diplôme <b>SST</b>":"le recyclage <b>MAC SST</b>")+".</div>";
+  reco+="<div class='reco'>Pour compléter votre prévention au travail : <b>Gestes & Postures</b> (TMS, port de charge) et <b>Sécurité Incendie EPI</b> — cochez-les à l'étape suivante si elles vous intéressent.</div>";
   var svline=(SV?" · "+be(SV):"");
   el.innerHTML="<div class='medal'>"+medal+"</div><div class='code' style='color:"+col+"'>"+grade+"</div><h2 style='margin-top:10px'>Score : "+LSCORE+" points</h2><p>Agent : <b>"+be(PR)+"</b>"+svline+"<br>Bonnes étapes : <b>"+bonnes+"/"+S.length+"</b> · Erreurs : <b>"+erreurs+"</b> · Temps restant : <b>"+fmt(Math.max(t,0))+"</b></p><h2>Votre mini-diagnostic</h2>"+reco+"<div class='cta'>Dernière étape : choisissez les formations qui vous intéressent — elles seront transmises à ANDRAGOPS Académie.</div><button class='big' style='margin-top:14px' onclick='showChoix()'>Choisir mes formations →</button>";
   saveScore();
 }
 function saveScore(){try{var k='andragops_bouclier_scores';var arr=JSON.parse(localStorage.getItem(k)||'[]');window.LREC_ID=Date.now();arr.push({id:window.LREC_ID,prenom:PR,nom:NOM,service:SV,sst:SSTU,score:LSCORE,badge:LBADGE,fini:LFINI,erreurs:erreurs,bonnes:bonnes,total:S.length,e_seod:et.seod,e_sst:et.sst,e_inc:et.incendie,wants:'',obs:'',date:new Date().toISOString()});if(arr.length>300)arr=arr.slice(arr.length-300);localStorage.setItem(k,JSON.stringify(arr));}catch(e){}}
-function ckSync(){[['w_seod','ck_seod'],['w_sst','ck_sst'],['w_mac','ck_mac'],['w_inc','ck_inc']].forEach(function(p){var c=$(p[0]),l=$(p[1]);if(c&&l)l.classList.toggle('on',c.checked);});}
+function ckSync(){[['w_sst','ck_sst'],['w_mac','ck_mac'],['w_gp','ck_gp'],['w_inc','ck_inc']].forEach(function(p){var c=$(p[0]),l=$(p[1]);if(c&&l)l.classList.toggle('on',c.checked);});}
 function showChoix(){$('fin').classList.add('hide');$('choix').classList.remove('hide');
-  $('w_seod').checked=recSEOD;$('w_sst').checked=recSST;$('w_mac').checked=recMAC;$('w_inc').checked=recINC;
-  ['w_seod','w_sst','w_mac','w_inc'].forEach(function(id){$(id).onchange=ckSync;});
+  $('w_sst').checked=recSST;$('w_mac').checked=recMAC;$('w_gp').checked=recGP;$('w_inc').checked=recINC;
+  ['w_sst','w_mac','w_gp','w_inc'].forEach(function(id){$(id).onchange=ckSync;});
   ckSync();try{window.scrollTo(0,0)}catch(e){}}
 function submitChoices(){
   var btn=$('btnSend');btn.disabled=true;
-  var wants=[];if($('w_seod').checked)wants.push('SEOD Close Protect');if($('w_sst').checked)wants.push('SST');if($('w_mac').checked)wants.push('MAC SST');if($('w_inc').checked)wants.push('Sécurité Incendie EPI 7h');
+  var wants=[];if($('w_sst').checked)wants.push('SST');if($('w_mac').checked)wants.push('MAC SST');if($('w_gp').checked)wants.push('Gestes & Postures');if($('w_inc').checked)wants.push('Sécurité Incendie EPI 7h');
   var obs=($('obs').value||'').trim();
   try{var sk='andragops_bouclier_scores';var sa=JSON.parse(localStorage.getItem(sk)||'[]');for(var si=sa.length-1;si>=0;si--){if(sa[si].id===window.LREC_ID){sa[si].wants=wants.join(', ');sa[si].obs=obs;break;}}localStorage.setItem(sk,JSON.stringify(sa));}catch(e){}
   try{fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({prenom:PR,nom:NOM,service:SV,sst:SSTU,score:LSCORE,badge:LBADGE,fini:LFINI,erreurs:erreurs,bonnes:bonnes,total:S.length,e_seod:et.seod,e_sst:et.sst,e_inc:et.incendie,wants:wants.join(', '),observation:obs})}).catch(function(){});}catch(e){}
   var body="Bonjour ANDRAGOPS,%0D%0A%0D%0A"
     +"Suite au jeu OPÉRATION BOUCLIER, voici mes informations :%0D%0A"
     +"- Nom : "+encodeURIComponent(NOM)+"%0D%0A- Prénom : "+encodeURIComponent(PR)+"%0D%0A"
-    +(SV?"- Société / unité : "+encodeURIComponent(SV)+"%0D%0A":"")
+    +(SV?"- Société / service : "+encodeURIComponent(SV)+"%0D%0A":"")
     +"- Déjà SST : "+(SSTU==='oui'?'Oui':'Non')+"%0D%0A"
     +"- Score : "+LSCORE+" pts · Badge : "+encodeURIComponent(LBADGE)+"%0D%0A"
     +"- Formations souhaitées : "+encodeURIComponent(wants.length?wants.join(', '):'(aucune cochée)')+"%0D%0A"
