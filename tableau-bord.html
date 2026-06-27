@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="fr"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Tableau de bord formateur — OPÉRATION BOUCLIER</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@600;700&family=Inter:wght@400;500;600;700&display=swap');
+:root{color-scheme:light;--navy:#0F2D4B;--b:#1F4E79;--o:#C9A66B;--creme:#FAF7F2;--ink:#16202c;--mut:#5b6b7e;--line:#e3ddd2;--r:#C00000;--v:#2E6B3E}
+*{box-sizing:border-box;margin:0;padding:0;font-family:'Inter',system-ui,Arial,sans-serif}
+body{background:var(--creme);color:var(--ink);padding:22px;max-width:1180px;margin:0 auto}
+header{display:flex;align-items:center;gap:14px;border-bottom:2px solid var(--o);padding-bottom:12px;margin-bottom:6px}
+header img{height:46px}
+.htxt h1{font-family:'Rajdhani';color:var(--navy);font-size:24px;letter-spacing:.5px;line-height:1}
+.htxt p{color:var(--mut);font-size:13px;margin-top:2px}
+.note{background:#fff;border:1px solid var(--line);border-left:4px solid var(--o);border-radius:5px;padding:10px 13px;color:#54627a;font-size:12.5px;margin:12px 0 16px;line-height:1.5}
+.toolbar{display:flex;gap:9px;flex-wrap:wrap;margin-bottom:16px}
+.btn{font-family:'Rajdhani';font-weight:700;letter-spacing:.6px;border:1px solid var(--navy);background:var(--navy);color:#fff;padding:9px 15px;border-radius:5px;cursor:pointer;font-size:13px;text-transform:uppercase}
+.btn.ghost{background:#fff;color:var(--navy)}.btn.dgr{background:#fff;color:var(--r);border-color:var(--r)}
+.btn:hover{filter:brightness(1.08)}
+.cards{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:14px}
+@media(max-width:880px){.cards{grid-template-columns:repeat(2,1fr)}}
+.kpi{background:#fff;border:1px solid var(--line);border-top:3px solid var(--navy);border-radius:6px;padding:13px}
+.kpi .v{font-family:'Rajdhani';font-weight:700;color:var(--navy);font-size:30px;line-height:1}
+.kpi .l{color:var(--mut);font-size:12px;margin-top:3px;text-transform:uppercase;letter-spacing:.4px}
+.kpi.or{border-top-color:var(--o)}.kpi.or .v{color:#a9852f}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+@media(max-width:880px){.grid2{grid-template-columns:1fr}}
+.panel{background:#fff;border:1px solid var(--line);border-radius:6px;padding:15px}
+.panel h2{font-family:'Rajdhani';color:var(--navy);font-size:17px;margin-bottom:11px;letter-spacing:.4px}
+.barrow{display:flex;align-items:center;gap:10px;margin-bottom:9px}
+.barrow .lab{width:148px;font-size:13px;color:var(--ink);font-weight:600}
+.barwrap{flex:1;background:#eef1f5;border-radius:5px;height:20px;overflow:hidden}
+.barwrap>i{display:block;height:100%;border-radius:5px}
+.barrow .val{width:78px;text-align:right;font-family:'Rajdhani';font-weight:700;color:var(--mut);font-size:14px}
+table{width:100%;border-collapse:collapse;background:#fff;border:1px solid var(--line);border-radius:6px;overflow:hidden;font-size:13px}
+th{background:var(--navy);color:#fff;font-family:'Rajdhani';font-weight:600;text-align:left;padding:9px 10px;letter-spacing:.4px;font-size:12.5px;cursor:pointer;white-space:nowrap}
+td{padding:8px 10px;border-top:1px solid var(--line);vertical-align:top}
+tr:nth-child(even) td{background:#faf8f3}
+.bdg{font-family:'Rajdhani';font-weight:700;font-size:12px;padding:2px 8px;border-radius:20px;white-space:nowrap}
+.bdg.Or{background:#f5e6c4;color:#8a6a1f}.bdg.Argent{background:#e9ecef;color:#556677}.bdg.Bronze{background:#f0ddc9;color:#90531c}
+.bdg.Interrompu{background:#f7d9d9;color:#a31515}
+.empty{background:#fff;border:1px dashed var(--line);border-radius:6px;padding:40px;text-align:center;color:var(--mut)}
+.foot{color:var(--mut);font-size:12px;margin-top:16px;text-align:center}
+@media print{.toolbar,.note{display:none}body{padding:0}.btn{display:none}}
+</style></head><body>
+<header>
+  <img src="logo.png" alt="ANDRAGOPS">
+  <div class="htxt"><h1>Tableau de bord formateur — OPÉRATION BOUCLIER</h1><p>Suivi des parties jouées · ANDRAGOPS Académie</p></div>
+</header>
+<div class="note">📍 Ce tableau lit les parties enregistrées <b>sur ce poste / navigateur</b> (jeu autonome, sans serveur central). Pour un suivi centralisé en direct de tous les joueurs, un backend est nécessaire (option à activer). Ouvrez cette page sur le même appareil que celui où le jeu a été joué.</div>
+<div class="toolbar">
+  <button class="btn" onclick="location.reload()">🔄 Rafraîchir</button>
+  <button class="btn ghost" onclick="exportCSV()">⬇️ Exporter CSV</button>
+  <button class="btn ghost" onclick="window.print()">🖨️ Imprimer / PDF</button>
+  <button class="btn dgr" onclick="clearData()">🗑️ Effacer les données</button>
+</div>
+<div id="content"></div>
+<div class="foot">ANDRAGOPS Académie · 07 59 73 82 72 · info@andragops-academie.fr · andragops-academie.fr</div>
+<script>
+var KEY='andragops_bouclier_scores';
+function load(){try{return JSON.parse(localStorage.getItem(KEY)||'[]');}catch(e){return[];}}
+function be(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+function fdate(iso){try{var d=new Date(iso);return d.toLocaleDateString('fr-FR')+' '+d.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});}catch(e){return be(iso);}}
+var rows=load();var sortKey='date',sortDir=-1;
+function render(){
+  var c=document.getElementById('content');
+  if(!rows.length){c.innerHTML="<div class='empty'>Aucune partie enregistrée sur ce poste pour l'instant.<br>Lancez une partie depuis le jeu, puis revenez ici.</div>";return;}
+  var n=rows.length;
+  var avg=Math.round(rows.reduce(function(a,r){return a+(+r.score||0);},0)/n);
+  var best=rows.reduce(function(a,r){return Math.max(a,+r.score||0);},0);
+  var fini=rows.filter(function(r){return r.fini;}).length;
+  var bc={Or:0,Argent:0,Bronze:0,Interrompu:0};rows.forEach(function(r){if(bc[r.badge]!=null)bc[r.badge]++;});
+  var eS=0,eT=0,eI=0;rows.forEach(function(r){eS+=(+r.e_seod||0);eT+=(+r.e_sst||0);eI+=(+r.e_inc||0);});
+  var wc={'SEOD Close Protect':0,'SST':0,'MAC SST':0,'Sécurité Incendie EPI 7h':0};
+  rows.forEach(function(r){(r.wants||'').split(',').forEach(function(w){w=w.trim();if(wc[w]!=null)wc[w]++;});});
+  var maxE=Math.max(1,eS,eT,eI),maxW=Math.max(1,wc['SEOD Close Protect'],wc['SST'],wc['MAC SST'],wc['Sécurité Incendie EPI 7h']);
+  function bar(lab,val,max,col){return "<div class='barrow'><span class='lab'>"+lab+"</span><span class='barwrap'><i style='width:"+Math.round(val/max*100)+"%;background:"+col+"'></i></span><span class='val'>"+val+"</span></div>";}
+  var html="<div class='cards'>"
+   +kpi(n,'Parties jouées','')+kpi(avg+' pts','Score moyen','')+kpi(best+' pts','Meilleur score','or')
+   +kpi(Math.round(fini/n*100)+'%','Missions terminées','')+kpi(bc.Or,'Badges Or','or')+"</div>";
+  html+="<div class='grid2'>";
+  html+="<div class='panel'><h2>Où la cohorte pèche (erreurs cumulées)</h2>"
+    +bar('Sûreté / SEOD',eS,maxE,'#0F2D4B')+bar('Secours / SST',eT,maxE,'#C00000')+bar('Incendie / EPI',eI,maxE,'#b3700f')
+    +"<p style='color:#7b8798;font-size:12px;margin-top:6px'>Plus la barre est longue, plus la formation correspondante est à prioriser.</p></div>";
+  html+="<div class='panel'><h2>Formations demandées (volontaires)</h2>"
+    +bar('SEOD Close Protect',wc['SEOD Close Protect'],maxW,'#0F2D4B')+bar('SST',wc['SST'],maxW,'#C00000')
+    +bar('MAC SST',wc['MAC SST'],maxW,'#1F4E79')+bar('Incendie EPI 7h',wc['Sécurité Incendie EPI 7h'],maxW,'#b3700f')
+    +"<p style='color:#7b8798;font-size:12px;margin-top:6px'>Badges : Or "+bc.Or+" · Argent "+bc.Argent+" · Bronze "+bc.Bronze+" · Interrompu "+bc.Interrompu+"</p></div>";
+  html+="</div>";
+  var sorted=rows.slice().sort(function(a,b){var x=a[sortKey],y=b[sortKey];if(sortKey==='score'){x=+x||0;y=+y||0;}else{x=String(x||'');y=String(y||'');}return x<y?-sortDir:x>y?sortDir:0;});
+  html+="<table><thead><tr>"+["date|Date","prenom|Prénom","nom|Nom","service|Société","sst|Déjà SST","score|Score","badge|Badge","erreurs|Err.","wants|Formations souhaitées","obs|Observation"].map(function(h){var p=h.split('|');return "<th onclick=\"sortBy('"+p[0]+"')\">"+p[1]+"</th>";}).join("")+"</tr></thead><tbody>";
+  sorted.forEach(function(r){html+="<tr><td>"+fdate(r.date)+"</td><td>"+be(r.prenom)+"</td><td>"+be(r.nom)+"</td><td>"+be(r.service)+"</td><td>"+(r.sst==='oui'?'Oui':'Non')+"</td><td><b>"+(+r.score||0)+"</b></td><td><span class='bdg "+be(r.badge)+"'>"+be(r.badge)+"</span></td><td>"+(+r.erreurs||0)+"</td><td>"+be(r.wants||'—')+"</td><td>"+be(r.obs||'')+"</td></tr>";});
+  html+="</tbody></table>";
+  c.innerHTML=html;
+}
+function kpi(v,l,cls){return "<div class='kpi "+(cls||'')+"'><div class='v'>"+v+"</div><div class='l'>"+l+"</div></div>";}
+function sortBy(k){if(sortKey===k){sortDir=-sortDir;}else{sortKey=k;sortDir=(k==='score'||k==='date')?-1:1;}render();}
+function exportCSV(){
+  if(!rows.length){alert('Aucune donnée à exporter.');return;}
+  var cols=['date','prenom','nom','service','sst','score','badge','fini','erreurs','bonnes','total','e_seod','e_sst','e_inc','wants','obs'];
+  var head=['Date','Prenom','Nom','Societe','DejaSST','Score','Badge','MissionTerminee','Erreurs','BonnesEtapes','Total','Err_SEOD','Err_SST','Err_Incendie','FormationsSouhaitees','Observation'];
+  function esc(v){v=String(v==null?'':v);return '"'+v.replace(/"/g,'""')+'"';}
+  var lines=[head.map(esc).join(';')];
+  rows.slice().sort(function(a,b){return new Date(b.date)-new Date(a.date);}).forEach(function(r){lines.push(cols.map(function(k){return esc(r[k]);}).join(';'));});
+  var csv='﻿'+lines.join('\r\n');
+  var blob=new Blob([csv],{type:'text/csv;charset=utf-8;'});var url=URL.createObjectURL(blob);
+  var a=document.createElement('a');a.href=url;a.download='OPERATION-BOUCLIER_parties_'+new Date().toISOString().slice(0,10)+'.csv';document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(url);
+}
+function clearData(){if(confirm('Effacer DÉFINITIVEMENT toutes les parties enregistrées sur ce poste ? Pensez à exporter le CSV avant.')){localStorage.removeItem(KEY);rows=[];render();}}
+render();
+</script></body></html>
