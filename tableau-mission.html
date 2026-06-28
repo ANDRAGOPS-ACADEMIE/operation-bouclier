@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="fr"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Tableau de mission — Opération BOUCLIER · ANDRAGOPS Académie</title>
+<style>
+:root{--r:#C01A1A;--g:#1f8a4c;--b:#1F4E79;--ink:#1d2330;--mut:#6b7280;--bg:#eef1f5;--card:#fff;--line:#e6e9ef}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',system-ui,Arial,sans-serif;background:linear-gradient(180deg,#f6f8fb,#eef1f5);color:var(--ink);padding:22px;max-width:1100px;margin:0 auto}
+.top{display:flex;align-items:center;gap:14px;border-bottom:3px solid var(--r);padding-bottom:14px;margin-bottom:18px}
+.brand{font-weight:800;letter-spacing:.5px;font-size:20px}.brand span{color:var(--r)}
+.top .sub{color:var(--mut);font-size:13px;margin-top:2px}
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px}
+.btn{background:var(--r);color:#fff;border:none;padding:11px 18px;border-radius:10px;font-weight:700;cursor:pointer;font-size:14px;box-shadow:0 1px 2px rgba(0,0,0,.08)}
+.btn.ghost{background:#fff;color:var(--ink);border:1px solid var(--line)}
+.btn.b{background:var(--b)}.btn.gr{background:var(--g)}.btn:hover{filter:brightness(.97)}
+.ctrl{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px 20px;display:flex;align-items:center;justify-content:space-between;gap:18px;margin-bottom:18px;box-shadow:0 6px 18px rgba(20,30,60,.06)}
+.ctrl-title{font-size:13px;color:var(--mut);text-transform:uppercase;letter-spacing:1px;font-weight:700}
+.state-label{font-size:24px;font-weight:900;margin:4px 0 2px}
+.state-label.lon{color:var(--g)}.state-label.loff{color:var(--r)}
+.ctrl-hint{font-size:12px;color:var(--mut)}
+.switch{position:relative;width:128px;height:56px;border-radius:30px;border:none;cursor:pointer;background:#cfd6e0;transition:background .25s;flex:0 0 auto}
+.switch.on{background:var(--g)}.switch.off{background:var(--r)}
+.switch .knob{position:absolute;top:5px;left:5px;width:46px;height:46px;border-radius:50%;background:#fff;transition:left .25s;box-shadow:0 2px 6px rgba(0,0,0,.25)}
+.switch.on .knob{left:77px}
+.switch .onoff{position:absolute;top:0;height:56px;line-height:56px;font-weight:800;font-size:13px;color:#fff}
+.switch .onoff.on{left:16px}.switch .onoff.off{right:14px}
+.switch.on .onoff.off{opacity:.25}.switch.off .onoff.on{opacity:.25}
+.tabbar{display:flex;gap:8px;flex-wrap:wrap}
+.tab{border:1px solid var(--line);border-bottom:none;padding:12px 22px;border-radius:12px 12px 0 0;font-weight:700;cursor:pointer;background:#e9edf3;color:#52607a;font-size:14px}
+.tab.active{background:var(--card);color:var(--r);box-shadow:0 -2px 0 var(--r) inset}
+.tab.green{background:#dff1e6;color:var(--g)}.tab.green.active{background:var(--card);color:var(--g);box-shadow:0 -2px 0 var(--g) inset}
+.panewrap{background:var(--card);border:1px solid var(--line);border-radius:0 14px 14px 14px;padding:18px;box-shadow:0 6px 18px rgba(20,30,60,.05)}
+.pane{display:none}.pane.show{display:block}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:8px}
+.k{background:#f7f9fc;border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+.k .n{font-size:12px;color:var(--mut);font-weight:600}.k b{font-size:26px;display:block;margin-top:4px;color:var(--ink)}
+h2{font-size:16px;margin:18px 0 8px;color:var(--ink)}
+.fdem{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}@media(max-width:680px){.fdem{grid-template-columns:1fr 1fr}}
+.fc{background:#fff;border:1px solid var(--line);border-top:4px solid var(--b);border-radius:12px;padding:14px;text-align:center}
+.fc .num{font-size:34px;font-weight:900;color:var(--b)}.fc .lab{font-size:13px;font-weight:700;margin-top:2px}.fc .sub{font-size:11px;color:var(--mut)}
+table{width:100%;border-collapse:collapse;border:1px solid var(--line);border-radius:12px;overflow:hidden}
+th{background:var(--r);color:#fff;padding:10px;text-align:left;font-size:12px;font-weight:700}
+td{padding:9px 10px;border-top:1px solid var(--line);font-size:13px}
+tr:nth-child(even) td{background:#fafbfd}
+.medal{font-size:18px}.pill{display:inline-block;background:#eaf1fb;color:var(--b);border:1px solid #cfe0f5;border-radius:20px;padding:1px 8px;font-size:11px;font-weight:700;margin:1px}
+.reco{background:#fff6f6;border:1px solid #f3c9c9;border-left:4px solid var(--r);border-radius:8px;padding:11px 12px;margin-top:8px;font-size:14px}.reco b{color:var(--r)}
+canvas{display:block;margin:12px auto;max-width:100%}
+footer{color:var(--mut);font-size:12px;margin-top:18px;text-align:center}
+</style>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap');
+:root{--r:#e23b3b;--rd:#b4151a;--g:#2fbf71;--b:#3b82f6;--ink:#e8edf5;--mut:#8696ad;--card:#10151f;--card2:#141b27;--line:rgba(255,255,255,.08);--amber:#f0b429}
+body{font-family:'Inter','Segoe UI',system-ui,Arial,sans-serif;color:var(--ink);background:radial-gradient(1200px 600px at 82% -12%,#15202f,transparent),#0a0d13;padding:26px 22px 44px;max-width:1180px;margin:0 auto;-webkit-font-smoothing:antialiased;position:relative}
+body::before{content:"";position:fixed;inset:0;background-image:repeating-linear-gradient(0deg,rgba(255,255,255,.014) 0 1px,transparent 1px 40px),repeating-linear-gradient(90deg,rgba(255,255,255,.014) 0 1px,transparent 1px 40px);pointer-events:none;z-index:0}
+body>*{position:relative;z-index:1}
+.top{display:flex;align-items:center;gap:16px;background:linear-gradient(135deg,#101a28,#0c1119);border:1px solid var(--line);border-radius:5px;padding:20px 24px;margin-bottom:20px;box-shadow:0 18px 40px rgba(0,0,0,.5);position:relative;overflow:hidden}
+.top::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:linear-gradient(180deg,var(--r),var(--rd))}
+.top::after{content:"";position:absolute;right:-40px;top:-60px;width:220px;height:220px;border-radius:50%;background:radial-gradient(circle,rgba(226,59,59,.10),transparent 70%)}
+.top img{height:46px;width:auto;border-radius:8px;background:#fff;padding:6px;flex:0 0 auto;box-shadow:0 4px 12px rgba(0,0,0,.4);position:relative;z-index:1}
+.brand{font-family:'Rajdhani';font-weight:700;letter-spacing:1px;font-size:23px;line-height:1.1;color:#fff;text-transform:uppercase;position:relative;z-index:1}.brand span{color:var(--r)}
+.top .sub{color:#9fb0c6;font-size:13px;margin-top:3px}
+.top .badge{margin-left:auto;background:rgba(226,59,59,.12);border:1px solid rgba(226,59,59,.4);color:#ff9b9b;font-family:'Rajdhani';font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:8px 14px;border-radius:3px;position:relative;z-index:1}
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:18px;align-items:center}
+.btn{background:rgba(255,255,255,.05);color:#dbe4f2;border:1px solid var(--line);padding:11px 18px;border-radius:3px;font-family:'Rajdhani';font-weight:700;letter-spacing:.6px;cursor:pointer;font-size:14px;text-transform:uppercase;transition:.14s}
+.btn:hover{transform:translateY(-1px);border-color:var(--mut);background:rgba(255,255,255,.09)}
+.btn.ghost{background:rgba(255,255,255,.03);color:#c4cee0}
+.btn.b{background:linear-gradient(135deg,#1d4e8a,#2E6CA8);border-color:transparent;color:#fff}
+.btn.gr{background:linear-gradient(135deg,#15803d,#22c55e);border-color:transparent;color:#fff}
+.ctrl{background:linear-gradient(180deg,var(--card2),var(--card));border:1px solid var(--line);border-radius:5px;padding:20px 22px;display:flex;align-items:center;justify-content:space-between;gap:18px;margin-bottom:18px;box-shadow:0 12px 30px rgba(0,0,0,.4)}
+.ctrl-title{font-family:'Rajdhani';font-size:12px;color:var(--mut);text-transform:uppercase;letter-spacing:1.5px;font-weight:700}
+.state-label{font-family:'Rajdhani';font-size:24px;font-weight:700;margin:5px 0 3px;letter-spacing:1px}
+.state-label.lon{color:var(--g)}.state-label.loff{color:var(--r)}
+.ctrl-hint{font-size:12px;color:var(--mut)}
+.switch{position:relative;width:132px;height:54px;border-radius:30px;border:1px solid var(--line);cursor:pointer;background:#0a0e15;transition:background .25s;flex:0 0 auto;box-shadow:inset 0 2px 8px rgba(0,0,0,.5)}
+.switch.on{background:linear-gradient(135deg,#15803d,#22c55e)}.switch.off{background:linear-gradient(135deg,#b4151a,#e23b3b)}
+.switch .knob{position:absolute;top:5px;left:5px;width:42px;height:42px;border-radius:50%;background:#fff;transition:left .25s;box-shadow:0 3px 8px rgba(0,0,0,.5)}
+.switch.on .knob{left:84px}
+.switch .onoff{position:absolute;top:0;height:54px;line-height:54px;font-family:'Rajdhani';font-weight:700;font-size:13px;letter-spacing:1px;color:#fff}
+.switch .onoff.on{left:18px}.switch .onoff.off{right:16px}
+.switch.on .onoff.off{opacity:.3}.switch.off .onoff.on{opacity:.3}
+.tabbar{display:flex;gap:6px;flex-wrap:wrap}
+.tab{border:1px solid transparent;border-bottom:none;padding:12px 22px;border-radius:5px 5px 0 0;font-family:'Rajdhani';font-weight:700;letter-spacing:.6px;text-transform:uppercase;cursor:pointer;background:transparent;color:var(--mut);font-size:14px;transition:.15s}
+.tab:hover{color:#cdd6e4}
+.tab.active{background:linear-gradient(180deg,var(--card2),var(--card));color:#fff;border-color:var(--line);box-shadow:0 -3px 0 var(--r) inset}
+.tab.green{background:transparent;color:var(--mut)}.tab.green.active{background:linear-gradient(180deg,var(--card2),var(--card));color:#fff;border-color:var(--line);box-shadow:0 -3px 0 var(--g) inset}
+.panewrap{background:linear-gradient(180deg,var(--card2),var(--card));border:1px solid var(--line);border-radius:0 5px 5px 5px;padding:22px;box-shadow:0 14px 34px rgba(0,0,0,.4)}
+.pane.show{display:block;animation:fadein .25s ease}
+@keyframes fadein{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(165px,1fr));gap:14px;margin-bottom:6px}
+.k{background:rgba(255,255,255,.025);border:1px solid var(--line);border-radius:4px;padding:16px 18px;position:relative;overflow:hidden;transition:.14s}
+.k:hover{transform:translateY(-2px);border-color:rgba(255,255,255,.16)}
+.k::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px}
+.kpis .k:nth-child(1)::before{background:var(--b)}.kpis .k:nth-child(2)::before{background:var(--g)}.kpis .k:nth-child(3)::before{background:var(--amber)}.kpis .k:nth-child(4)::before{background:#64748b}
+.k .n{font-family:'Rajdhani';font-size:12px;color:var(--mut);font-weight:600;text-transform:uppercase;letter-spacing:1px}
+.k b{font-family:'Rajdhani';font-size:32px;display:block;margin-top:4px;color:#fff;font-weight:700;font-variant-numeric:tabular-nums}
+h2{font-family:'Rajdhani';font-size:18px;margin:22px 0 10px;color:#fff;font-weight:700;letter-spacing:.6px;text-transform:uppercase}
+.fdem{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}@media(max-width:680px){.fdem{grid-template-columns:1fr 1fr}}
+.fc{background:rgba(255,255,255,.025);border:1px solid var(--line);border-radius:4px;padding:18px 14px;text-align:center;position:relative;overflow:hidden;transition:.14s}
+.fc:hover{transform:translateY(-2px);border-color:rgba(255,255,255,.16)}
+.fc::before{content:"";position:absolute;left:0;right:0;top:0;height:4px}
+.fdem .fc:nth-child(1)::before{background:var(--b)}
+.fdem .fc:nth-child(2)::before{background:#60a5fa}
+.fdem .fc:nth-child(3)::before{background:#f97316}
+.fc .num{font-family:'Rajdhani';font-size:40px;font-weight:700;line-height:1;color:#fff;font-variant-numeric:tabular-nums}
+.fdem .fc:nth-child(3) .num{color:#fb923c}
+.fc .lab{font-family:'Rajdhani';font-size:14px;font-weight:700;margin-top:6px;color:#dbe4f2;letter-spacing:.5px;text-transform:uppercase}.fc .sub{font-size:11px;color:var(--mut);margin-top:2px}
+table{width:100%;border-collapse:separate;border-spacing:0;border:1px solid var(--line);border-radius:5px;overflow:hidden}
+th{background:#0c1320;color:#aebfd6;padding:12px 11px;text-align:left;font-family:'Rajdhani';font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;white-space:nowrap;border-bottom:1px solid var(--line)}
+td{padding:11px;border-top:1px solid rgba(255,255,255,.05);font-size:13px;color:#c4cee0}
+tr:nth-child(even) td{background:rgba(255,255,255,.02)}
+tbody tr:hover td{background:rgba(59,130,246,.08)}
+.pill{display:inline-block;background:rgba(59,130,246,.14);color:#9dc3f5;border:1px solid rgba(59,130,246,.35);border-radius:3px;padding:2px 9px;font-size:11px;font-weight:700;margin:2px}
+.reco{background:rgba(226,59,59,.07);border:1px solid rgba(226,59,59,.25);border-left:3px solid var(--r);border-radius:3px;padding:12px 14px;margin-top:9px;font-size:14px;color:#dbe4f2}.reco b{color:#ff9b9b}
+canvas{display:block;margin:14px auto;max-width:100%}
+footer{color:var(--mut);font-size:12px;margin-top:22px;text-align:center}
+</style></head><body>
+<div class="top">
+<img src="logo.png" alt="ANDRAGOPS">
+<div>
+<div class="brand">OPÉRATION <span>BOUCLIER</span> — Tableau de mission</div>
+<div class="sub">Gestes de secours tactique · pilotage du jeu, demandes de formation &amp; lacunes</div>
+</div>
+<span class="badge">Espace direction · privé</span>
+</div>
+
+<div class="ctrl">
+  <div>
+    <div class="ctrl-title">Démarrer / Suspendre le jeu</div>
+    <div id="stateLabel" class="state-label">Vérification…</div>
+    <div class="ctrl-hint">ON = l'équipe peut jouer · OFF = jeu suspendu (écran « fermé » côté joueur).</div>
+  </div>
+  <button id="sw" class="switch" onclick="toggleGame()" title="Démarrer ou suspendre le jeu">
+    <span class="onoff on">ON</span><span class="onoff off">OFF</span><span class="knob"></span>
+  </button>
+</div>
+
+<div class="toolbar">
+  <button class="btn" onclick="charger()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px;margin-right:6px"><path d="M3.5 12a8.5 8.5 0 0 1 14.5-6"/><path d="M18 3v3.5h-3.5"/><path d="M20.5 12a8.5 8.5 0 0 1-14.5 6"/><path d="M6 21v-3.5h3.5"/></svg>Actualiser</button>
+  <button class="btn b" onclick="genWord()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px;margin-right:6px"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path d="M9 13h6M9 17h4"/></svg>Synthèse Word</button>
+  <button class="btn gr" onclick="genExcel()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" style="vertical-align:-3px;margin-right:6px"><rect x="3.5" y="3.5" width="17" height="17" rx="2.2"/><path d="M3.5 9.5h17M3.5 14.5h17M9 9.5v11M15 9.5v11" stroke-width="1.3"/></svg>Export Excel (participants + demandes)</button>
+  <button class="btn ghost" style="margin-left:auto" onclick="resetGame()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px;margin-right:6px"><path d="M4 7h16"/><path d="M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/><path d="M6 7l1 13a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1l1-13"/><path d="M10 11v6M14 11v6"/></svg>Réinitialiser</button>
+</div>
+
+<div class="tabbar">
+  <button class="tab active" id="tabBtnS" onclick="showTab('S')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px;margin-right:6px"><rect x="6" y="4.5" width="12" height="16" rx="2"/><path d="M9 4.5h6V7a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1z"/><path d="M9 12h6M9 16h4"/></svg>Synthèse &amp; demandes</button>
+  <button class="tab green" id="tabBtnR" onclick="showTab('R')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="vertical-align:-3px;margin-right:6px"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.8"/><circle cx="12" cy="12" r="1.5" fill="currentColor" stroke="none"/></svg>Radar des lacunes</button>
+</div>
+<div class="panewrap">
+  <div id="paneS" class="pane show">
+    <div id="kpis" class="kpis"></div>
+    <h2><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px;margin-right:7px"><path d="M12 4 2.5 9 12 14l9.5-5z"/><path d="M6 11.2V16c0 1.1 2.7 2.5 6 2.5s6-1.4 6-2.5v-4.8"/><path d="M21.5 9.5v4.5"/></svg>Demandes de formation (volontariat de l'équipe)</h2>
+    <div id="fdem" class="fdem"></div>
+    <h2><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px;margin-right:7px"><circle cx="9" cy="8" r="3.2"/><path d="M3.5 19a5.5 5.5 0 0 1 11 0"/><path d="M15.5 5.2a3.2 3.2 0 0 1 0 5.9"/><path d="M20.5 19a5.5 5.5 0 0 0-3-4.9"/></svg>Participants &amp; choix</h2>
+    <table><thead><tr><th>#</th><th>Prénom</th><th>Nom</th><th>Service</th><th>SST</th><th>Score</th><th>Badge</th><th>Formations demandées</th><th>Observation</th><th>Date</th></tr></thead><tbody id="rows"><tr><td colspan="10" style="padding:16px">Chargement…</td></tr></tbody></table>
+    <h2><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" style="vertical-align:-3px;margin-right:7px"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.3 15.3l4.7 4.7"/></svg>Analyse des lacunes (diagnostic)</h2>
+    <div id="reco"></div>
+  </div>
+  <div id="paneR" class="pane">
+    <h2 style="color:#1f8a4c"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="vertical-align:-3px;margin-right:7px"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.8"/><circle cx="12" cy="12" r="1.5" fill="currentColor" stroke="none"/></svg>Radar des lacunes (cumul)</h2>
+    <canvas id="radL" width="420" height="420"></canvas>
+    <div id="radLegend"></div>
+    <p style="color:#6b7280;font-size:12px">Plus l'aire s'étire sur un axe, plus les erreurs y sont nombreuses : c'est là que le besoin de formation est le plus fort.</p>
+  </div>
+</div>
+<footer>Page privée ANDRAGOPS — code d'accès requis. Données : prénom + service (facultatif), non sensibles.</footer>
+<script>
+var API="https://eumviuptmyzgftrqpape.supabase.co/functions/v1/bouclier";
+var CODE=localStorage.getItem('andragops_bouclier_admin')||"";
+var DATA=[];
+var DOM={e_seod:["Hémorragie & garrot","SST (initiale) / MAC SST (recyclage)"],e_sst:["Voies aériennes & MARCHE","SST / MAC SST"],e_inc:["Extraction & alerte","SST / MAC SST"]};
+function $(x){return document.getElementById(x)}
+function esc(s){return String(s==null?"":s).replace(/[&<>]/g,function(c){return c=='&'?'&amp;':c=='<'?'&lt;':'&gt;'})}
+function wantList(r){return (r.wants||'').split(',').map(function(x){return x.trim()}).filter(Boolean);}
+function wants(r){var L=wantList(r),o=[];if(L.indexOf('SST')>=0)o.push('SST');if(L.indexOf('MAC SST')>=0)o.push('MAC SST');if(L.indexOf('Gestes & Postures')>=0)o.push('Gestes & Postures');if(L.indexOf('Sécurité Incendie EPI 7h')>=0)o.push('Incendie EPI');return o;}
+function demCounts(){var d={sst:0,mac:0,gp:0,inc:0};DATA.forEach(function(r){var L=wantList(r);if(L.indexOf('SST')>=0)d.sst++;if(L.indexOf('MAC SST')>=0)d.mac++;if(L.indexOf('Gestes & Postures')>=0)d.gp++;if(L.indexOf('Sécurité Incendie EPI 7h')>=0)d.inc++;});return d;}
+function askCode(){if(!CODE){var c=prompt("Code d'accès direction (formateur) :","");if(!c)return false;CODE=c;localStorage.setItem('andragops_bouclier_admin',c)}return true;}
+
+function setSwitch(open){var sw=$('sw'),lbl=$('stateLabel');if(!sw)return;sw.dataset.open=open?'1':'0';sw.classList.toggle('on',!!open);sw.classList.toggle('off',!open);lbl.textContent=open?'🟢 JEU EN MARCHE':'🔴 JEU SUSPENDU';lbl.className='state-label '+(open?'lon':'loff');}
+function refreshState(){fetch(API+"?state=1&z="+Date.now()).then(function(r){return r.json()}).then(function(j){setSwitch(j&&j.open!==false)}).catch(function(){})}
+function toggleGame(){if(!askCode())return;var sw=$('sw');var open=sw.dataset.open==='1';var set=open?'close':'open';if(!confirm(open?'Suspendre le jeu ? L’équipe ne pourra plus le lancer.':'Démarrer le jeu ? L’équipe pourra jouer.'))return;$('stateLabel').textContent='…';fetch(API+"?set="+set+"&z="+Date.now(),{headers:{'x-admin-key':CODE}}).then(function(r){return r.json()}).then(function(j){if(j&&typeof j.open!=='undefined'){setSwitch(j.open)}else{alert('Action refusée — vérifie le code d’accès.');refreshState()}}).catch(function(){alert('Erreur réseau');refreshState()})}
+function resetGame(){if(!askCode())return;if(!confirm("Vider le tableau ? Les parties sont d'abord ARCHIVÉES (récupérables), puis retirées de l'affichage."))return;fetch(API+"?reset=1&z="+Date.now(),{headers:{'x-admin-key':CODE}}).then(function(r){return r.json()}).then(function(j){if(j&&j.ok){alert("✅ Tableau vidé — "+(j.archived||0)+" partie(s) archivée(s), récupérables.");charger();}else{alert("Échec — vérifie le code d’accès.")}}).catch(function(){alert("Erreur réseau")})}
+
+function charger(){if(!askCode())return;
+fetch(API+"?z="+Date.now(),{headers:{'x-admin-key':CODE}}).then(function(r){return r.json()}).then(function(rows){
+ if(!Array.isArray(rows)){$('rows').innerHTML="<tr><td colspan=10 style='padding:16px;color:#e23b3b'>Code incorrect. <a href='#' style='color:#9dc3f5' onclick='localStorage.removeItem(\"andragops_bouclier_admin\");location.reload()'>réessayer</a></td></tr>";return}
+ DATA=rows;
+ var n=DATA.length;var moy=n?Math.round(DATA.reduce(function(s,r){return s+(r.score||0)},0)/n):0;
+ var sstOui=DATA.filter(function(r){return r.sst==='oui'}).length;
+ $('kpis').innerHTML="<div class='k'><div class='n'>Parties jouées</div><b>"+n+"</b></div><div class='k'><div class='n'>Score moyen</div><b>"+moy+"</b></div><div class='k'><div class='n'>Déjà SST</div><b>"+sstOui+"</b></div><div class='k'><div class='n'>Non SST</div><b>"+(n-sstOui)+"</b></div>";
+ var dem=demCounts();
+ $('fdem').innerHTML="<div class='fc'><div class='num'>"+dem.sst+"</div><div class='lab'>SST</div><div class='sub'>Sauveteur Secouriste</div></div><div class='fc'><div class='num'>"+dem.mac+"</div><div class='lab'>MAC SST</div><div class='sub'>recyclage</div></div><div class='fc'><div class='num'>"+dem.gp+"</div><div class='lab'>Gestes & Postures</div><div class='sub'>TMS / port de charge</div></div><div class='fc'><div class='num'>"+dem.inc+"</div><div class='lab'>Incendie EPI</div><div class='sub'>extincteurs / évac.</div></div>";
+ $('rows').innerHTML=n?DATA.map(function(r,i){var w=wants(r);return "<tr><td>"+(i+1)+"</td><td>"+esc(r.prenom)+"</td><td>"+esc(r.nom||'—')+"</td><td>"+esc(r.service||'—')+"</td><td>"+(r.sst==='oui'?'Oui':'Non')+"</td><td>"+(r.score||0)+"</td><td>"+esc(r.badge||'')+"</td><td>"+(w.length?w.map(function(x){return "<span class='pill'>"+x+"</span>"}).join(" "):"<span style='color:#999'>—</span>")+"</td><td>"+esc(r.observation||'')+"</td><td>"+(r.created_at?new Date(r.created_at).toLocaleString('fr-FR'):'')+"</td></tr>"}).join(""):"<tr><td colspan=10 style='padding:16px'>Aucune partie pour le moment.</td></tr>";
+ var tot={e_seod:0,e_sst:0,e_inc:0};DATA.forEach(function(r){for(var k in tot)tot[k]+=(r[k]||0)});
+ var ks=Object.keys(tot).sort(function(a,b){return tot[b]-tot[a]});var html="";ks.forEach(function(k){if(tot[k]>0)html+="<div class='reco'><b>"+DOM[k][0]+"</b> — "+tot[k]+" erreur(s) cumulée(s) → formation conseillée : <b>"+DOM[k][1]+"</b></div>"});
+ $('reco').innerHTML=n?(html||"<p style='color:#6ee7a8'>Aucune faiblesse marquée — excellent niveau global.</p>"):"<p style='color:#8696ad'>En attente de participations.</p>";
+ if($('paneR').className.indexOf('show')>=0)drawLacunes();
+}).catch(function(){$('rows').innerHTML="<tr><td colspan=10 style='padding:16px;color:#e23b3b'>Erreur réseau.</td></tr>"})}
+</script>
+<script>
+function genWord(){
+ if(!DATA.length){alert("Aucune donnée. Clique d'abord sur Actualiser.");return}
+ var n=DATA.length;var moy=Math.round(DATA.reduce(function(s,r){return s+(r.score||0)},0)/n);
+ var sstOui=DATA.filter(function(r){return r.sst==='oui'}).length;var dem=demCounts();
+ var tot={e_seod:0,e_sst:0,e_inc:0};DATA.forEach(function(r){for(var k in tot)tot[k]+=(r[k]||0)});
+ var ks=Object.keys(tot).sort(function(a,b){return tot[b]-tot[a]});
+ var d=new Date().toLocaleDateString('fr-FR');
+ var rowsTable=DATA.map(function(r,i){return "<tr><td>"+(i+1)+"</td><td>"+esc(r.prenom)+"</td><td>"+esc(r.nom||'')+"</td><td>"+esc(r.service||'')+"</td><td>"+(r.sst==='oui'?'Oui':'Non')+"</td><td>"+(r.score||0)+"</td><td>"+esc(r.badge||'')+"</td><td>"+esc(wants(r).join(', ')||'—')+"</td><td>"+esc(r.observation||'')+"</td></tr>"}).join("");
+ var recoList=ks.filter(function(k){return tot[k]>0}).map(function(k){return "<li><b>"+DOM[k][0]+"</b> ("+tot[k]+" erreur(s)) → <b>"+DOM[k][1]+"</b></li>"}).join("")||"<li>Aucune faiblesse marquée — recyclages d'entretien conseillés.</li>";
+ var h="<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word'><head><meta charset='utf-8'><style>body{font-family:Calibri,Arial;color:#222}h1{color:#0F2D4B}h2{color:#0F2D4B;border-bottom:2px solid #C9A66B;padding-bottom:3px}table{border-collapse:collapse;width:100%}td,th{border:1px solid #999;padding:6px;font-size:10.5pt}th{background:#0F2D4B;color:#fff}</style></head><body>";
+ h+="<h1>Synthèse — Opération BOUCLIER · Gestes de secours tactique</h1>";
+ h+="<p><b>Date d'édition :</b> "+d+"<br><b>Réalisé par :</b> ANDRAGOPS Académie — Organisme de formation Sécurité &amp; Secours<br>Strasbourg / Alsace · Tél. 07 59 73 82 72 · info@andragops-academie.fr · www.andragops-academie.fr</p>";
+ h+="<h2>1. Participation</h2><p>Parties jouées : <b>"+n+"</b> · Score moyen : <b>"+moy+"</b> · Déjà SST : <b>"+sstOui+"</b> · Non SST : <b>"+(n-sstOui)+"</b></p>";
+ h+="<h2>2. Demandes de formation (volontariat)</h2><table><tr><th>Formation</th><th>Nombre de volontaires</th></tr><tr><td>SST — Sauveteur Secouriste du Travail</td><td>"+dem.sst+"</td></tr><tr><td>MAC SST (recyclage)</td><td>"+dem.mac+"</td></tr><tr><td>Gestes & Postures (TMS / port de charge)</td><td>"+dem.gp+"</td></tr><tr><td>Sécurité Incendie EPI</td><td>"+dem.inc+"</td></tr></table>";
+ h+="<h2>3. Détail des participants</h2><table><tr><th>#</th><th>Prénom</th><th>Nom</th><th>Service</th><th>SST</th><th>Score</th><th>Badge</th><th>Formations demandées</th><th>Observation</th></tr>"+rowsTable+"</table>";
+ h+="<h2>4. Analyse des lacunes (diagnostic)</h2><ul>"+recoList+"</ul>";
+ h+="<h2>5. Recommandation ANDRAGOPS</h2><p>Sur la base de ce diagnostic ludique et des volontariats exprimés, nous recommandons un plan de formation présentiel ciblé (80% de pratique), avec une attention particulière aux gestes qui sauvent (hémorragie, garrot, MARCHE, alerte). Organisme engagé Qualiopi — prise en charge OPCO possible. Déplacement inclus 50 km autour de Strasbourg.</p>";
+ h+="<p style='margin-top:18px;color:#888;font-size:9.5pt'>Document généré à partir des résultats du jeu. Bilan indicatif, non certifiant.</p></body></html>";
+ var b=new Blob(['﻿'+h],{type:'application/msword'});var a=document.createElement('a');a.href=URL.createObjectURL(b);a.download="Synthese_OperationBouclier.doc";document.body.appendChild(a);a.click();document.body.removeChild(a);
+}
+function genExcel(){
+ if(!DATA.length){alert("Aucune donnée. Clique d'abord sur Actualiser.");return}
+ var d=new Date().toLocaleDateString('fr-FR');var dm=demCounts();
+ var head=["#","Prénom","Nom","Service","Déjà SST","Score","Badge","Err. hémorragie","Err. voies aér.","Err. extraction","Veut SST","Veut MAC SST","Veut G&P","Veut Incendie","Observation","Date"];
+ var w=[32,92,92,120,70,54,68,84,84,84,64,64,58,66,240,128];
+ var cg="";w.forEach(function(px){cg+="<col style='width:"+px+"px'>"});
+ var thead="<tr class='hd'>"+head.map(function(x){return "<td>"+esc(x)+"</td>"}).join("")+"</tr>";
+ var body="";
+ DATA.forEach(function(r,i){var L=wantList(r);
+  var cells=[[(i+1),'num'],[r.prenom,'b'],[r.nom||'',''],[r.service||'',''],[(r.sst==='oui'?'Oui':'Non'),(r.sst==='oui'?'ok':'mut')],[(r.score||0),'num b'],[r.badge||'','num'],[(r.e_seod||0),'num'],[(r.e_sst||0),'num'],[(r.e_inc||0),'num'],[(L.indexOf('SST')>=0?'Oui':''),'ok'],[(L.indexOf('MAC SST')>=0?'Oui':''),'ok'],[(L.indexOf('Gestes & Postures')>=0?'Oui':''),'ok'],[(L.indexOf('Sécurité Incendie EPI 7h')>=0?'Oui':''),'ok'],[r.observation||'',''],[(r.created_at?new Date(r.created_at).toLocaleString('fr-FR'):''),'mut']];
+  body+="<tr"+(i%2?" class='z'":"")+">"+cells.map(function(o){return "<td class='"+o[1]+"'>"+esc(o[0]==null?'':o[0])+"</td>"}).join("")+"</tr>";
+ });
+ var tot="<tr class='tot'><td colspan='10'>TOTAL volontaires</td><td>"+dm.sst+"</td><td>"+dm.mac+"</td><td>"+dm.gp+"</td><td>"+dm.inc+"</td><td></td><td></td></tr>";
+ var styles="<style>table{border-collapse:collapse}td{font-family:Calibri,Arial,sans-serif;font-size:10.5pt;border:.5pt solid #C7CFDA;padding:4px 8px;vertical-align:middle}.ttl td{font-size:15pt;font-weight:bold;color:#0F2D4B;border:none}.sub td{font-size:9.5pt;color:#6B7280;border:none}.sp td{height:6px;border:none}.hd td{background:#0F2D4B;color:#fff;font-weight:bold;text-align:center;border:.5pt solid #0a1f36}.num{text-align:center}.b{font-weight:bold}.mut{color:#6B7280}.ok{text-align:center;color:#1F8A4C;font-weight:bold;background:#EAF7EF}.z td{background:#F4F7FB}.tot td{background:#FBF3E0;font-weight:bold;color:#7A5B00;text-align:center;border:.5pt solid #C9A66B}.tot td:first-child{text-align:right;color:#0F2D4B}</style>";
+ var xo="<!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>Participants</x:Name><x:WorksheetOptions><x:DoNotDisplayGridlines/><x:FreezePanes/><x:FrozenNoSplit/><x:SplitHorizontal>4</x:SplitHorizontal><x:TopRowBottomPane>4</x:TopRowBottomPane><x:ActivePane>2</x:ActivePane></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]-->";
+ var sheet="<table>"+cg+"<tr class='ttl'><td colspan='16'>OPÉRATION BOUCLIER — Gestes de secours tactique</td></tr><tr class='sub'><td colspan='16'>Participants &amp; demandes de formation · édité le "+d+" · ANDRAGOPS Académie · info@andragops-academie.fr</td></tr><tr class='sp'><td colspan='16'></td></tr>"+thead+body+tot+"</table>";
+ var h="<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:x='urn:schemas-microsoft-com:office:excel'><head><meta charset='utf-8'>"+xo+styles+"</head><body>"+sheet+"</body></html>";
+ var b=new Blob(['﻿'+h],{type:'application/vnd.ms-excel'});var a=document.createElement('a');a.href=URL.createObjectURL(b);a.download="Participants_OperationBouclier.xls";document.body.appendChild(a);a.click();document.body.removeChild(a);
+}
+var LK=['e_seod','e_sst','e_inc'];var LL={e_seod:'Hémorragie',e_sst:'Voies aér.',e_inc:'Extraction'};
+function drawLacunes(){var v={};LK.forEach(function(k){v[k]=0});DATA.forEach(function(r){LK.forEach(function(k){v[k]+=(r[k]||0)})});
+ var max=Math.max(1,Math.max.apply(null,LK.map(function(k){return v[k]})));
+ var c=$('radL');if(!c)return;var x=c.getContext('2d'),cx=210,cy=210,R=150,nn=LK.length;x.clearRect(0,0,420,420);
+ var ang=[];for(var k=0;k<nn;k++)ang.push(-Math.PI/2+2*Math.PI*k/nn);
+ x.strokeStyle='rgba(255,255,255,.10)';for(var g=1;g<=4;g++){x.beginPath();for(var k=0;k<nn;k++){var rr=R*g/4,px=cx+rr*Math.cos(ang[k]),py=cy+rr*Math.sin(ang[k]);k?x.lineTo(px,py):x.moveTo(px,py)}x.closePath();x.stroke()}
+ x.strokeStyle='rgba(255,255,255,.18)';for(var k=0;k<nn;k++){x.beginPath();x.moveTo(cx,cy);x.lineTo(cx+R*Math.cos(ang[k]),cy+R*Math.sin(ang[k]));x.stroke()}
+ x.beginPath();for(var k=0;k<nn;k++){var rr2=R*(v[LK[k]]/max),px2=cx+rr2*Math.cos(ang[k]),py2=cy+rr2*Math.sin(ang[k]);k?x.lineTo(px2,py2):x.moveTo(px2,py2)}x.closePath();x.fillStyle='rgba(47,191,113,.28)';x.fill();x.strokeStyle='#2fbf71';x.lineWidth=2;x.stroke();
+ x.fillStyle='#cdd6e4';x.font="13px 'Rajdhani',Arial";x.textAlign='center';for(var k=0;k<nn;k++){var lx=cx+(R+30)*Math.cos(ang[k]),ly=cy+(R+30)*Math.sin(ang[k])+4;x.fillText(LL[LK[k]]+' ('+v[LK[k]]+')',lx,ly)}
+ var tt=LK.reduce(function(s,k){return s+v[k]},0);var worst=LK.slice().sort(function(a,b){return v[b]-v[a]})[0];
+ $('radLegend').innerHTML=tt?("<div class='reco' style='border-left-color:#2fbf71;border-color:rgba(47,191,113,.3);background:rgba(47,191,113,.08)'>Domaine le plus en difficulté : <b style='color:#6ee7a8'>"+LL[worst]+"</b> — "+v[worst]+" erreur(s). Reprise prioritaire conseillée.</div>"):"<p style='color:#6ee7a8'>Aucune erreur enregistrée — excellent niveau.</p>";
+}
+function showTab(tb){var s=(tb==='S');$('paneS').className='pane'+(s?' show':'');$('paneR').className='pane'+(s?'':' show');$('tabBtnS').className='tab'+(s?' active':'');$('tabBtnR').className='tab green'+(s?'':' active');if(!s)drawLacunes();}
+refreshState();setInterval(refreshState,30000);if(CODE)charger();setInterval(function(){if(CODE)charger()},30000);
+</script></body></html>
