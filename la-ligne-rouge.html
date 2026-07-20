@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="fr"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>LA LIGNE ROUGE — Simulateur d'appel aux secours · ANDRAGOPS Académie</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap');
+:root{--r:#C00000;--rd:#7a0d10;--v:#2E6B3E;--o:#C9A66B;--b:#1F4E79;--navy:#0F2D4B;--bg:#0b0708;--panel:#160d0f;--panel2:#1d1114;--line:rgba(192,0,0,.25);--ink:#f0e8e8;--mut:#a08a8a}
+*{box-sizing:border-box;margin:0;padding:0;font-family:'Inter',system-ui,Arial,sans-serif}
+body{background:radial-gradient(1200px 720px at 50% -12%,#2a1215,#0b0708 62%),#0b0708;color:var(--ink);min-height:100vh;padding:18px;-webkit-font-smoothing:antialiased;position:relative;overflow-x:hidden}
+body::before{content:"";position:fixed;inset:0;background-image:repeating-linear-gradient(0deg,rgba(192,0,0,.02) 0 1px,transparent 1px 38px),repeating-linear-gradient(90deg,rgba(192,0,0,.02) 0 1px,transparent 1px 38px);pointer-events:none;z-index:0}
+.app{width:100%;max-width:760px;margin:0 auto;position:relative;z-index:1}
+header{display:flex;justify-content:space-between;align-items:center;padding:10px 2px;margin-bottom:16px;border-bottom:1px solid var(--line)}
+.logo{font-family:'Rajdhani';font-weight:700;letter-spacing:3px;font-size:17px;text-transform:uppercase}.logo span{color:var(--r)}
+.chrono{font-family:'Rajdhani';font-size:28px;font-weight:700;background:#0d0506;padding:2px 14px;border-radius:4px;border:1px solid var(--r);color:#fff;font-variant-numeric:tabular-nums;letter-spacing:2px;box-shadow:0 0 18px rgba(192,0,0,.3)}
+.card{background:linear-gradient(180deg,var(--panel2),var(--panel));border:1px solid var(--line);border-radius:4px;padding:24px;margin-bottom:14px;position:relative;box-shadow:0 18px 40px rgba(0,0,0,.5)}
+.card::before{content:"";position:absolute;left:0;top:14px;bottom:14px;width:3px;background:linear-gradient(180deg,var(--r),#5c0a0d)}
+.brand{display:block;margin:2px auto 14px;width:110px;max-width:40%;height:auto;filter:drop-shadow(0 4px 12px rgba(0,0,0,.5))}
+h1{font-family:'Rajdhani';color:#fff;font-size:26px;line-height:1.12;margin-bottom:10px;font-weight:700}
+h2{font-family:'Rajdhani';font-size:20px;margin-bottom:10px;font-weight:700;color:#fff}
+p{line-height:1.6;margin-bottom:10px;color:#d8c8c8}
+.pitch{border-left:3px solid var(--r);padding:4px 0 4px 14px;color:#f0c9c9;background:linear-gradient(90deg,rgba(192,0,0,.08),transparent)}
+.tag{display:inline-block;background:var(--rd);color:#fff;font-family:'Rajdhani';font-weight:700;padding:4px 14px;border-radius:3px;font-size:12px;letter-spacing:1.5px;margin-bottom:10px;text-transform:uppercase;clip-path:polygon(8px 0,100% 0,calc(100% - 8px) 100%,0 100%);border:1px solid var(--r)}
+label{font-family:'Rajdhani';font-size:13px;color:var(--mut);display:block;margin-bottom:5px;letter-spacing:.8px;text-transform:uppercase;font-weight:600}
+input,textarea{width:100%;padding:12px;border-radius:3px;border:1px solid var(--line);background:#120809;color:var(--ink);margin-bottom:11px;font-size:15px;font-family:'Inter'}
+input:focus,textarea:focus{outline:none;border-color:var(--r);box-shadow:0 0 0 3px rgba(192,0,0,.18)}
+.big{background:linear-gradient(135deg,var(--rd),#4a080b);color:#fff;border:1px solid var(--r);padding:15px 24px;border-radius:3px;font-family:'Rajdhani';font-size:17px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;width:100%;transition:.15s;box-shadow:0 8px 24px rgba(122,13,16,.4)}
+.big:hover{filter:brightness(1.15)}
+.big:disabled{opacity:.4;cursor:default}
+.ghost{background:rgba(255,255,255,.04);border:1px solid var(--line);color:#e8d8d8;box-shadow:none}
+.scn{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:10px 0 14px}@media(max-width:560px){.scn{grid-template-columns:1fr}}
+button.sc{background:rgba(255,255,255,.03);border:1px solid var(--line);border-left:3px solid #3a2225;color:#e8d8d8;padding:13px;border-radius:3px;text-align:left;cursor:pointer;font-size:14px;transition:.15s}
+button.sc small{display:block;color:var(--mut);margin-top:3px;font-size:12px}
+button.sc.on{border-color:var(--r);border-left-color:var(--r);background:rgba(192,0,0,.14);color:#fff}
+.numpad{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:16px 0}
+button.num{background:#120809;border:2px solid var(--line);color:#fff;font-family:'Rajdhani';font-size:34px;font-weight:700;padding:20px;border-radius:6px;cursor:pointer;transition:.15s}
+button.num small{display:block;font-size:12px;font-family:'Inter';font-weight:500;color:var(--mut);letter-spacing:.5px}
+button.num:hover{border-color:var(--r);box-shadow:0 0 20px rgba(192,0,0,.25)}
+.callhead{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.avatar{width:46px;height:46px;border-radius:50%;background:linear-gradient(135deg,var(--rd),#3a0608);display:flex;align-items:center;justify-content:center;font-size:22px;border:1px solid var(--r);flex:none}
+.avatar.pulse{animation:pu 1.2s ease-in-out infinite}@keyframes pu{50%{box-shadow:0 0 0 10px rgba(192,0,0,.12)}}
+.opname{font-family:'Rajdhani';font-weight:700;font-size:17px;color:#fff}
+.opstate{font-size:12.5px;color:var(--mut)}
+.opstate.live{color:#9ff0bd}
+.chat{background:#0d0607;border:1px solid var(--line);border-radius:4px;padding:12px;height:290px;overflow-y:auto;margin-bottom:12px}
+.bub{max-width:86%;padding:9px 12px;border-radius:8px;margin-bottom:8px;font-size:14.5px;line-height:1.45}
+.bub.op{background:rgba(192,0,0,.14);border:1px solid rgba(192,0,0,.3);border-bottom-left-radius:2px}
+.bub.me{background:rgba(31,78,121,.22);border:1px solid rgba(31,78,121,.5);margin-left:auto;border-bottom-right-radius:2px;color:#dcebf8}
+.bub.sys{background:transparent;border:none;color:var(--mut);font-size:12.5px;text-align:center;max-width:100%}
+.microw{display:flex;gap:10px;align-items:stretch}
+button.mic{flex:1;background:linear-gradient(135deg,#14301f,#0a1a10);border:2px solid var(--v);color:#c9f0d5;padding:16px;border-radius:4px;font-family:'Rajdhani';font-size:17px;font-weight:700;letter-spacing:1px;cursor:pointer;text-transform:uppercase}
+button.mic.rec{background:linear-gradient(135deg,#5c0a0d,#310507);border-color:var(--r);color:#ffd6d6;animation:pu 1.2s infinite}
+button.hang{background:#310507;border:2px solid var(--r);color:#ff9d9d;padding:16px 20px;border-radius:4px;font-size:22px;cursor:pointer}
+button.hang.ok{background:var(--v);border-color:#9ff0bd;color:#fff;animation:pu 1.2s infinite}
+.txtrow{display:flex;gap:8px;margin-top:10px}.txtrow input{margin:0}
+.txtrow button{background:var(--navy);border:1px solid var(--b);color:#fff;padding:0 18px;border-radius:3px;cursor:pointer;font-weight:700}
+.hint{font-size:12px;color:var(--mut);margin-top:8px;text-align:center}
+.verdict{text-align:center}.medal{font-size:54px;line-height:1;margin:6px 0}
+.score-big{font-family:'Rajdhani';font-size:44px;font-weight:700;color:var(--r)}
+.gridtab{width:100%;border-collapse:collapse;margin:14px 0;font-size:14px}
+.gridtab td{padding:9px 8px;border-bottom:1px solid rgba(192,0,0,.14);text-align:left}
+.gridtab td:last-child{text-align:right;white-space:nowrap;font-weight:600}
+.st-ok{color:#9ff0bd}.st-mid{color:#f0d59f}.st-ko{color:#ff9d9d}
+.reco{background:rgba(122,13,16,.2);border:1px solid rgba(192,0,0,.35);border-left:3px solid var(--r);border-radius:3px;padding:13px;margin-top:10px;text-align:left;color:#f0dcdc;font-size:14px}.reco b{color:#ff9d9d}
+.transc{background:#0d0607;border:1px solid var(--line);border-radius:4px;padding:12px;max-height:220px;overflow-y:auto;text-align:left;font-size:13px;margin-top:12px}
+.transc div{margin-bottom:6px}.transc b{color:#ff9d9d}
+.hrow{display:flex;align-items:center;gap:10px;padding:10px 4px;border-bottom:1px solid rgba(192,0,0,.14);font-size:14px}
+.hrow .sc2{font-family:'Rajdhani';font-weight:700;color:var(--o);margin-left:auto;white-space:nowrap}
+.hide{display:none}
+footer{text-align:center;color:#6b5555;font-size:11px;margin-top:18px}
+#splash{position:fixed;inset:0;background:radial-gradient(circle at 50% 35%,#2a1215,#0b0506 65%);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:999;text-align:center;transition:opacity .8s;padding:20px}
+#splash.out{opacity:0;pointer-events:none}
+#splash img{width:150px;max-width:46%;filter:drop-shadow(0 8px 30px rgba(0,0,0,.6))}
+#splash .stitle{font-family:'Rajdhani';color:#fff;font-size:33px;font-weight:700;letter-spacing:5px;margin-top:16px;text-transform:uppercase}
+#splash .stitle b{color:var(--r)}
+#splash .stag{color:#c6a8a8;margin-top:8px;max-width:520px;line-height:1.5}
+#splash .skip{margin-top:24px;font-family:'Rajdhani';color:#fff;font-size:15px;font-weight:700;letter-spacing:2px;text-transform:uppercase;background:linear-gradient(135deg,var(--rd),#4a080b);border:1px solid var(--r);padding:13px 30px;border-radius:3px;cursor:pointer;clip-path:polygon(10px 0,100% 0,calc(100% - 10px) 100%,0 100%)}
+</style></head><body>
+<div id="splash" onclick="hideSplash()"><img src="logo.png" alt="ANDRAGOPS"><div class="stitle">LA LIGNE <b>ROUGE</b></div><div class="stag">Simulateur d'appel aux services de secours — décrochez, gardez votre sang-froid, transmettez le bon message d'alerte.</div><button class="skip" onclick="hideSplash()">Entrer ▶</button></div>
+
+<div class="app">
+<header><div class="logo">LA LIGNE <span>ROUGE</span></div><div id="chrono" class="chrono hide">--:--</div></header>
+
+<!-- ÉCRAN FORMATEUR -->
+<div id="setup" class="card"><img class="brand" src="logo.png" alt="ANDRAGOPS Académie">
+<span class="tag">Espace formateur · Préparation de l'exercice</span>
+<h1>Simulateur d'appel aux secours</h1>
+<p class="pitch">Briefez l'apprenant à l'oral sur la situation, choisissez le scénario ci-dessous, puis passez-lui l'appareil : il devra composer le bon numéro et transmettre un <b>message d'alerte complet</b> à l'opérateur, à la voix.</p>
+<label>Prénom de l'apprenant</label><input id="prenom" placeholder="Prénom">
+<label>Scénario (invisible pour l'apprenant)</label>
+<div class="scn" id="scnList"></div>
+<button class="big" onclick="startHandoff()">📱 Passer l'appareil à l'apprenant</button>
+<button class="big ghost" style="margin-top:8px" onclick="showHistory()">📋 Historique des passages</button>
+<p class="hint">Fonctionne sans installation : reconnaissance vocale du navigateur (Chrome recommandé, micro requis). Un mode clavier de secours est disponible pendant l'appel.</p></div>
+
+<!-- REMISE DE L'APPAREIL -->
+<div id="handoff" class="card hide" style="text-align:center">
+<span class="tag">À l'apprenant</span>
+<h1 id="handTitle">À vous de jouer</h1>
+<p>Votre formateur vient de vous décrire la situation. Vous êtes le <b>premier témoin</b> : c'est à vous de donner l'alerte, maintenant.</p>
+<p class="pitch" style="text-align:left">Parlez normalement, comme lors d'un vrai appel. L'opérateur vous entend et vous posera des questions. Ne raccrochez que lorsqu'il vous le dira.</p>
+<button class="big" onclick="showDial()">✅ J'ai compris, j'appelle les secours</button></div>
+
+<!-- COMPOSITION DU NUMÉRO -->
+<div id="dial" class="card hide" style="text-align:center">
+<span class="tag">Appel d'urgence</span>
+<h2>Quel numéro composez-vous ?</h2>
+<div class="numpad">
+<button class="num" onclick="dialNum('15')">15<small>SAMU</small></button>
+<button class="num" onclick="dialNum('17')">17<small>Police</small></button>
+<button class="num" onclick="dialNum('18')">18<small>Pompiers</small></button>
+<button class="num" onclick="dialNum('112')">112<small>Urgence UE</small></button>
+</div></div>
+
+<!-- APPEL EN COURS -->
+<div id="call" class="card hide">
+<div class="callhead"><div id="opAvatar" class="avatar">🎧</div>
+<div><div class="opname" id="opName">Opérateur</div><div class="opstate" id="opState">Sonnerie…</div></div></div>
+<div class="chat" id="chat"></div>
+<div class="microw">
+<button class="mic" id="micBtn" onclick="toggleMic()">🎤 Parler</button>
+<button class="hang" id="hangBtn" onclick="hangUp()" title="Raccrocher">📵</button>
+</div>
+<div class="txtrow hide" id="txtRow"><input id="txtIn" placeholder="Écrivez votre réponse…" onkeydown="if(event.key==='Enter')sendTxt()"><button onclick="sendTxt()">➤</button></div>
+<p class="hint" id="micHint">Appuyez sur « Parler », énoncez votre message, il s'envoie tout seul à la fin de votre phrase. <a href="#" style="color:var(--mut)" onclick="toggleTxt();return false">Mode clavier</a></p></div>
+
+<!-- DEBRIEF -->
+<div id="debrief" class="card verdict hide"></div>
+
+<!-- HISTORIQUE -->
+<div id="history" class="card hide">
+<span class="tag">Espace formateur</span>
+<h2>📋 Historique des passages</h2>
+<div id="histList"></div>
+<button class="big ghost" style="margin-top:14px" onclick="exportCSV()">⬇ Exporter (CSV)</button>
+<button class="big" style="margin-top:8px" onclick="backSetup()">← Retour</button></div>
+
+<footer>ANDRAGOPS Académie · Strasbourg · Simulateur pédagogique — ne remplace pas un appel réel aux secours · andragops-academie.fr</footer>
+</div>
+
+<script>
+/* ============ DONNÉES SCÉNARIOS ============ */
+const SCENARIOS=[
+ {id:'hemo',fam:'victime',num:'15',title:'🩸 Hémorragie',desc:'Coupure profonde, saignement abondant (SST)',
+  nature:['saign','sang','coup','hemorragie','plaie','disqueuse','cutter','bless','entaille'],
+  natureLbl:"une hémorragie / un saignement abondant"},
+ {id:'inco',fam:'victime',num:'15',title:'😵 Victime inconsciente',desc:'Ne répond pas, respire (SST)',
+  nature:['inconscien','repond pas','evanoui','malaise','effondr','tomb','reagit pas','bouge plus'],
+  natureLbl:"une personne inconsciente"},
+ {id:'acr',fam:'victime',num:'15',title:'💔 Arrêt cardiaque',desc:'Inconscient, ne respire pas (SST)',
+  nature:['respire pas','arret','cardiaque','pouls','inconscien','reanim','massage'],
+  natureLbl:"un arrêt cardiaque"},
+ {id:'thor',fam:'victime',num:'15',title:'🫀 Douleur thoracique',desc:'Malaise cardiaque, conscient (SST)',
+  nature:['poitrine','thorax','douleur','serre','oppress','malaise','cardiaque','bras gauche'],
+  natureLbl:"un malaise avec douleur à la poitrine"},
+ {id:'feu1',fam:'feu',num:'18',title:'🔥 Départ de feu',desc:'Feu naissant dans un local (EPI)',
+  nature:['feu','incendie','flamme','fumee','brule','crame','depart de feu'],
+  natureLbl:"un départ de feu"},
+ {id:'feu2',fam:'feu',num:'18',title:'🚨 Feu + personne bloquée',desc:'Fumées, une personne à l\'intérieur (EPI)',
+  nature:['feu','incendie','flamme','fumee','brule','bloqu','coinc','enferm'],
+  natureLbl:"un incendie avec une personne bloquée"}
+];
+/* ============ GRILLE INRS DU MESSAGE D'ALERTE ============ */
+const KW={
+ lieu:['rue','avenue','boulevard','route','impasse','adresse','zone','batiment','etage','atelier','entrepot','usine','societe','entreprise','local','salle','hall','quai','parking','accueil','site','chantier','bureau','strasbourg','numero '],
+ nombre:['une victime','un blesse','une personne','une seule','deux ','trois ','quatre ','plusieurs','un collegue','une collegue','un homme','une femme','un seul','1 victime','2 victimes','3 victimes'],
+ etatV:['conscien','inconscien','respire','parle','reagit','pouls','allonge','il va','elle va','etat','saigne encore','stable'],
+ etatF:['bloqu','coinc','interieur','evacu','sorti','personne dedans','danger','tout le monde','a l\'abri','rassemblement','blesse'],
+ gestesV:['garrot','comprim','compression','appuie','appuy','pls','position laterale','massage','defibrillateur','dae','allonge','couvert','rassur','desserr','froid'],
+ gestesF:['extincteur','evacu','alarme','alerte','coupe le courant','coupe le gaz','ferme les portes','ria','attaqu le feu','sorti','rassemblement'],
+ risques:['risque','danger','machine','courant','electri','gaz','produit','chimique','circulation','suraccident','sur-accident','securis','balis','proteg'],
+ identite:['je m\'appelle','mon nom','a l\'appareil','mon numero','me rappeler','me joindre','06','07','zero six','zero sept','je suis monsieur','je suis madame']
+};
+const GRID=[
+ {id:'numero', label:'Bon numéro composé', tip:'Pour une urgence vitale : le 15 (SAMU) ; pour un feu : le 18 ; le 112 fonctionne partout en Europe.'},
+ {id:'nature', label:'Nature de l\'urgence annoncée', tip:'Dites immédiatement CE QUI SE PASSE : « une personne saigne abondamment », « il y a le feu »…'},
+ {id:'lieu', label:'Localisation précise', tip:'Adresse complète, bâtiment, étage, point d\'accès : les secours doivent vous trouver sans chercher.'},
+ {id:'nombre', label:'Nombre de victimes', tip:'Précisez toujours combien de personnes sont concernées.'},
+ {id:'etat', label:'État de la victime / personnes en danger', tip:'Consciente ? Respire-t-elle ? Pour un feu : y a-t-il des personnes bloquées ou évacuées ?'},
+ {id:'gestes', label:'Gestes / actions déjà réalisés', tip:'Dites ce qui a été fait : compression, PLS, évacuation, extincteur…'},
+ {id:'risques', label:'Risques particuliers signalés', tip:'Machine, courant, gaz, sur-accident : signalez les dangers persistants.'},
+ {id:'identite', label:'Identité et numéro de rappel', tip:'Donnez votre nom et un numéro où vous rappeler.'},
+ {id:'raccroche', label:'N\'a pas raccroché le premier', tip:'On ne raccroche JAMAIS avant que l\'opérateur le demande.'}
+];
+const ORDER=['nature','lieu','nombre','etat','gestes','risques','identite'];
+const QUESTIONS={
+ nature:"Que se passe-t-il exactement ?",
+ lieu:"Où êtes-vous ? Donnez-moi l'adresse précise et comment accéder au site.",
+ nombre:"Combien y a-t-il de victimes ?",
+ etatV:"Dans quel état est la victime ? Est-elle consciente ? Est-ce qu'elle respire ?",
+ etatF:"Y a-t-il des personnes en danger, bloquées, ou tout le monde est-il évacué ?",
+ gestesV:"Qu'avez-vous fait ? Des gestes de secours ont-ils été réalisés ?",
+ gestesF:"Qu'avez-vous fait sur place ? L'évacuation est-elle lancée ?",
+ risques:"Y a-t-il des risques particuliers sur place ? Machine, courant, gaz ?",
+ identite:"Quel est votre nom, et un numéro pour vous rappeler si besoin ?"
+};
+
+/* ============ ÉTAT ============ */
+let S={scn:null,prenom:'',dialed:'',found:{},asked:{},attempts:{},currentAsk:null,earlyHang:false,closing:false,canHang:false,log:[],t0:0,timer:null,ended:false};
+let recog=null,recActive=false,speaking=false,audio=null;
+const $=id=>document.getElementById(id);
+const norm=s=>s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+
+/* ============ SPLASH / NAV ============ */
+function hideSplash(){$('splash').classList.add('out')}
+function show(id){['setup','handoff','dial','call','debrief','history'].forEach(x=>$(x).classList.add('hide'));$(id).classList.remove('hide')}
+function backSetup(){show('setup');$('chrono').classList.add('hide')}
+
+/* ============ ÉCRAN FORMATEUR ============ */
+(function(){const w=$('scnList');SCENARIOS.forEach(sc=>{const b=document.createElement('button');b.className='sc';b.innerHTML=`<b>${sc.title}</b><small>${sc.desc}</small>`;b.onclick=()=>{S.scn=sc;[...w.children].forEach(c=>c.classList.remove('on'));b.classList.add('on')};w.appendChild(b)})})();
+function startHandoff(){
+ if(!S.scn){alert('Choisissez un scénario.');return}
+ S.prenom=($('prenom').value||'Apprenant').trim();
+ $('handTitle').textContent=S.prenom+', à vous de jouer';
+ show('handoff');
+}
+function showDial(){show('dial')}
+
+/* ============ SONS ============ */
+function ac(){if(!audio)audio=new (window.AudioContext||window.webkitAudioContext)();return audio}
+function tone(freq,dur,when,vol){const a=ac(),o=a.createOscillator(),g=a.createGain();o.frequency.value=freq;o.connect(g);g.connect(a.destination);g.gain.value=vol||.12;o.start(a.currentTime+when);o.stop(a.currentTime+when+dur)}
+function ringback(cb){tone(440,1.5,0);tone(440,1.5,3.2);setTimeout(cb,5200)}
+function busyBeep(){tone(480,.25,0);tone(480,.25,.45)}
+
+/* ============ VOIX (TTS) ============ */
+function speak(text,cb){
+ speaking=true;setOpState('parle…',true);stopMic();
+ addBub('op',text);
+ try{
+  const u=new SpeechSynthesisUtterance(text);u.lang='fr-FR';u.rate=1.04;
+  const vs=speechSynthesis.getVoices().filter(v=>v.lang&&v.lang.startsWith('fr'));
+  if(vs.length)u.voice=vs.find(v=>/female|femme|amelie|audrey|thomas|google/i.test(v.name))||vs[0];
+  u.onend=u.onerror=()=>{speaking=false;if(cb)cb()};
+  speechSynthesis.cancel();speechSynthesis.speak(u);
+  setTimeout(()=>{if(speaking){speaking=false;if(cb)cb()}},1500+text.length*90);
+ }catch(e){speaking=false;if(cb)cb()}
+}
+function setOpState(txt,talking){$('opState').textContent='Opérateur '+txt;$('opState').className='opstate'+(talking?'':' live');$('opAvatar').className='avatar'+(talking?' pulse':'')}
+
+/* ============ RECONNAISSANCE VOCALE ============ */
+function initRecog(){
+ const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+ if(!SR){toggleTxt(true);$('micBtn').disabled=true;$('micBtn').textContent='🎤 Non disponible';return}
+ recog=new SR();recog.lang='fr-FR';recog.continuous=false;recog.interimResults=true;
+ let finalTxt='';
+ recog.onresult=e=>{finalTxt='';for(let i=0;i<e.results.length;i++){if(e.results[i].isFinal)finalTxt+=e.results[i][0].transcript+' '}};
+ recog.onend=()=>{recActive=false;$('micBtn').classList.remove('rec');$('micBtn').textContent='🎤 Parler';
+  const t=finalTxt.trim();finalTxt='';
+  if(t&&!S.ended&&!speaking)handleUtterance(t)};
+ recog.onerror=e=>{recActive=false;$('micBtn').classList.remove('rec');$('micBtn').textContent='🎤 Parler';
+  if(e.error==='not-allowed'||e.error==='service-not-allowed'){toggleTxt(true);addBub('sys','Micro refusé — utilisez le mode clavier.')}};
+}
+function toggleMic(){if(!recog||S.ended||speaking)return;recActive?stopMic():startMic()}
+function startMic(){if(!recog||recActive||speaking||S.ended)return;try{recog.start();recActive=true;$('micBtn').classList.add('rec');$('micBtn').textContent='🔴 Je vous écoute — parlez';setOpState('vous écoute',false)}catch(e){}}
+function stopMic(){if(recog&&recActive){try{recog.stop()}catch(e){}}}
+function toggleTxt(on){const r=$('txtRow');if(on===true){r.classList.remove('hide')}else r.classList.toggle('hide')}
+function sendTxt(){const v=$('txtIn').value.trim();if(!v||S.ended||speaking)return;$('txtIn').value='';handleUtterance(v)}
+
+/* ============ APPEL ============ */
+function dialNum(n){
+ S.dialed=n;show('call');$('chat').innerHTML='';
+ S.found={};S.asked={};S.attempts={};S.currentAsk=null;S.earlyHang=false;S.closing=false;S.canHang=false;S.log=[];S.ended=false;
+ initRecog();
+ const good=S.scn.num;
+ S.found.numero=(n===good||n==='112')?'spont':(n==='15'||n==='18')?'relance':'non';
+ $('opName').textContent=n==='15'?'SAMU — Centre 15':n==='18'?'Sapeurs-Pompiers — CTA 18':n==='17'?'Police Secours — 17':'Urgences 112';
+ setOpState('— sonnerie…',true);
+ addBub('sys','Appel du '+n+' en cours…');
+ S.t0=Date.now();$('chrono').classList.remove('hide');S.timer=setInterval(()=>{const s=Math.floor((Date.now()-S.t0)/1000);$('chrono').textContent=String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0')},500);
+ ringback(()=>{
+  let greet;
+  if(n==='17'&&S.scn.fam!=='police'){greet="Police secours. Votre appel concerne une urgence de secours, je vous transfère au bon service, restez en ligne… Service de secours, je vous écoute.";}
+  else if(n==='18'&&S.scn.fam==='victime'){greet="Sapeurs-pompiers, j'écoute. … C'est une urgence médicale : je vous mets en relation avec le SAMU, restez en ligne. SAMU, je vous écoute.";}
+  else if(n==='15'&&S.scn.fam==='feu'){greet="SAMU, je vous écoute. … Pour un incendie je vous bascule vers les sapeurs-pompiers, restez en ligne. Pompiers, j'écoute.";}
+  else if(n==='112')greet="112, urgences. Quelle est la nature de votre appel ?";
+  else if(n==='15')greet="SAMU, bonjour, je vous écoute.";
+  else greet="Sapeurs-pompiers, j'écoute.";
+  speak(greet,()=>startMic());
+ });
+}
+function key(id){return id==='etat'?(S.scn.fam==='feu'?'etatF':'etatV'):id==='gestes'?(S.scn.fam==='feu'?'gestesF':'gestesV'):id}
+function matchElem(id,t){
+ if(id==='nature')return S.scn.nature.some(k=>t.includes(k));
+ return (KW[key(id)]||[]).some(k=>t.includes(norm(k)));
+}
+function handleUtterance(raw){
+ addBub('me',raw);S.log.push({who:S.prenom,txt:raw});
+ const t=norm(raw);
+ ORDER.forEach(id=>{
+  if(!S.found[id]&&matchElem(id,t))S.found[id]=(S.currentAsk===id)?'relance':'spont';
+ });
+ nextOperatorTurn();
+}
+function nextOperatorTurn(){
+ if(S.ended)return;
+ const missing=ORDER.filter(id=>!S.found[id]&&(S.attempts[id]||0)<2);
+ if(missing.length){
+  const id=missing[0];S.currentAsk=id;S.attempts[id]=(S.attempts[id]||0)+1;S.asked[id]=true;
+  let q=QUESTIONS[key(id)]||QUESTIONS[id];
+  if(S.attempts[id]===2)q="Je répète, c'est important : "+q;
+  speak(q,()=>startMic());
+ }else closingSequence();
+}
+function closingSequence(){
+ S.closing=true;S.currentAsk=null;
+ const msg=S.scn.fam==='feu'
+  ?"C'est noté, les secours partent immédiatement. Faites évacuer, fermez les portes derrière vous, n'utilisez pas les ascenseurs, et envoyez quelqu'un accueillir les engins. Ne raccrochez pas avant moi… C'est bon, vous pouvez raccrocher maintenant."
+  :"C'est noté, les secours sont en route. Restez près de la victime, surveillez son état, ne lui donnez ni à boire ni à manger, et rappelez le 15 si son état change. Ne raccrochez pas avant moi… C'est bon, vous pouvez raccrocher maintenant.";
+ speak(msg,()=>{S.canHang=true;$('hangBtn').classList.add('ok');setOpState('attend que vous raccrochiez',false)});
+}
+function hangUp(){
+ if(S.ended)return;
+ if(!S.canHang){S.earlyHang=true;busyBeep()}
+ endCall();
+}
+function endCall(){
+ S.ended=true;clearInterval(S.timer);stopMic();try{speechSynthesis.cancel()}catch(e){}
+ S.found.raccroche=S.earlyHang?'non':(S.canHang?'spont':'non');
+ showDebrief();
+}
+function addBub(cls,txt){const c=$('chat'),d=document.createElement('div');d.className='bub '+cls;d.textContent=txt;c.appendChild(d);c.scrollTop=c.scrollHeight;if(cls==='op')S.log.push({who:'Opérateur',txt})}
+
+/* ============ DEBRIEF ============ */
+function showDebrief(){
+ const dur=$('chrono').textContent;
+ let total=0,rows='',tips=[];
+ GRID.forEach(g=>{
+  let st=S.found[g.id]||'non',pts=st==='spont'?10:st==='relance'?5:0;
+  total+=pts;
+  const lbl=st==='spont'?'<span class="st-ok">✔ Spontané · 10</span>':st==='relance'?'<span class="st-mid">◑ Après relance · 5</span>':'<span class="st-ko">✘ Manquant · 0</span>';
+  rows+=`<tr><td>${g.label}</td><td>${lbl}</td></tr>`;
+  if(st!=='spont')tips.push('<b>'+g.label+' :</b> '+g.tip);
+ });
+ const pct=Math.round(total/(GRID.length*10)*100);
+ const badge=pct>=85?['🥇','Sang-froid d\'acier']:pct>=65?['🥈','Bon réflexe']:pct>=45?['🥉','En progression']:['🎯','À retravailler'];
+ if(S.earlyHang)tips.unshift('<b>Vous avez raccroché avant l\'opérateur.</b> On ne raccroche jamais le premier : il peut avoir des consignes à donner.');
+ const transcript=S.log.map(l=>`<div><b>${l.who} :</b> ${l.txt}</div>`).join('');
+ $('debrief').innerHTML=`<span class="tag">Débrief · ${S.scn.title}</span>
+  <div class="medal">${badge[0]}</div>
+  <div class="score-big">${pct} / 100</div>
+  <h2>${S.prenom} — ${badge[1]}</h2>
+  <p style="color:var(--mut)">Durée de l'appel : ${dur} · Numéro composé : ${S.dialed}</p>
+  <table class="gridtab">${rows}</table>
+  ${tips.length?'<div class="reco">'+tips.slice(0,4).join('<br><br>')+'</div>':'<div class="reco" style="border-left-color:var(--v)"><b style="color:#9ff0bd">Message d\'alerte complet.</b> Rien à redire : c\'est exactement ce qu\'attend un opérateur du 15 ou du 18.</div>'}
+  <div class="transc">${transcript}</div>
+  <button class="big" style="margin-top:14px" onclick="backSetup()">👥 Apprenant suivant</button>
+  <button class="big ghost" style="margin-top:8px" onclick="showHistory()">📋 Historique</button>`;
+ saveResult(pct,badge[1],dur);
+ show('debrief');$('chrono').classList.add('hide');
+}
+
+/* ============ HISTORIQUE ============ */
+function saveResult(pct,badge,dur){
+ const h=JSON.parse(localStorage.getItem('lr_hist')||'[]');
+ const grid={};GRID.forEach(g=>grid[g.id]=S.found[g.id]||'non');
+ h.unshift({p:S.prenom,s:S.scn.title,num:S.dialed,pct,badge,dur,d:new Date().toLocaleString('fr-FR'),grid});
+ localStorage.setItem('lr_hist',JSON.stringify(h.slice(0,200)));
+}
+function showHistory(){
+ const h=JSON.parse(localStorage.getItem('lr_hist')||'[]');
+ $('histList').innerHTML=h.length?h.map(r=>`<div class="hrow"><span>${r.p}</span><span style="color:var(--mut)">${r.s} · ${r.num} · ${r.dur} · ${r.d}</span><span class="sc2">${r.pct}/100</span></div>`).join(''):'<p style="color:var(--mut)">Aucun passage enregistré sur cet appareil.</p>';
+ show('history');
+}
+function exportCSV(){
+ const h=JSON.parse(localStorage.getItem('lr_hist')||'[]');if(!h.length)return;
+ const head=['Prenom','Scenario','Numero','Score','Badge','Duree','Date',...GRID.map(g=>g.label)];
+ const lines=h.map(r=>[r.p,r.s,r.num,r.pct,r.badge,r.dur,r.d,...GRID.map(g=>({spont:'Spontane',relance:'Apres relance',non:'Manquant'})[r.grid?.[g.id]||'non'])].map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(';'));
+ const blob=new Blob(['﻿'+head.join(';')+'\n'+lines.join('\n')],{type:'text/csv;charset=utf-8'});
+ const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='la-ligne-rouge-resultats.csv';a.click();
+}
+if('speechSynthesis' in window)speechSynthesis.getVoices();
+</script>
+</body></html>
