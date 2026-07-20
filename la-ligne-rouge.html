@@ -120,7 +120,7 @@ footer{text-align:center;color:#6b5555;font-size:11px;margin-top:18px}
 <button class="hang" id="hangBtn" onclick="hangUp()" title="Raccrocher">📵</button>
 </div>
 <div class="txtrow hide" id="txtRow"><input id="txtIn" placeholder="Écrivez votre réponse…" onkeydown="if(event.key==='Enter')sendTxt()"><button onclick="sendTxt()">➤</button></div>
-<p class="hint" id="micHint">Appuyez sur « Parler », énoncez votre message, il s'envoie tout seul à la fin de votre phrase. <a href="#" style="color:var(--mut)" onclick="toggleTxt();return false">Mode clavier</a></p></div>
+<p class="hint" id="micHint">Appuyez sur « Parler », énoncez votre message, il s'envoie tout seul à la fin de votre phrase. Le micro exige la version <b>en ligne (https)</b> et l'autorisation du navigateur. <a href="#" style="color:var(--mut)" onclick="toggleTxt();return false">Mode clavier</a></p></div>
 
 <!-- DEBRIEF -->
 <div id="debrief" class="card verdict hide"></div>
@@ -131,6 +131,7 @@ footer{text-align:center;color:#6b5555;font-size:11px;margin-top:18px}
 <h2>📋 Historique des passages</h2>
 <div id="histList"></div>
 <button class="big ghost" style="margin-top:14px" onclick="exportCSV()">⬇ Exporter (CSV)</button>
+<button class="big ghost" style="margin-top:8px;border-color:var(--r);color:#ff9d9d" onclick="resetHistory()">🗑 Réinitialiser l'historique</button>
 <button class="big" style="margin-top:8px" onclick="backSetup()">← Retour</button></div>
 
 <footer>ANDRAGOPS Académie · Strasbourg · Simulateur pédagogique — ne remplace pas un appel réel aux secours · andragops-academie.fr</footer>
@@ -236,20 +237,31 @@ function speak(text,cb){
 function setOpState(txt,talking){$('opState').textContent='Opérateur '+txt;$('opState').className='opstate'+(talking?'':' live');$('opAvatar').className='avatar'+(talking?' pulse':'')}
 
 /* ============ RECONNAISSANCE VOCALE ============ */
+let micReady=false;
+function micSupported(){return !!(window.SpeechRecognition||window.webkitSpeechRecognition)}
+function secureOK(){return window.isSecureContext||location.hostname==='localhost'||location.hostname==='127.0.0.1'}
+function micFallback(msg){toggleTxt(true);$('micBtn').classList.remove('rec');$('micBtn').textContent='🎤 Indisponible';$('micBtn').disabled=true;if(msg)addBub('sys',msg);setOpState('vous écoute (clavier)',false)}
 function initRecog(){
  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
- if(!SR){toggleTxt(true);$('micBtn').disabled=true;$('micBtn').textContent='🎤 Non disponible';return}
+ if(!SR){micFallback("Ce navigateur ne gère pas la reconnaissance vocale — répondez au clavier. (Chrome / Edge recommandés.)");return}
+ if(!secureOK()){micFallback("Le micro n'est pas autorisé quand la page est ouverte en fichier local. Utilisez le lien en ligne (https) — ou répondez au clavier ci-dessous.");return}
  recog=new SR();recog.lang='fr-FR';recog.continuous=false;recog.interimResults=true;
  let finalTxt='';
  recog.onresult=e=>{finalTxt='';for(let i=0;i<e.results.length;i++){if(e.results[i].isFinal)finalTxt+=e.results[i][0].transcript+' '}};
- recog.onend=()=>{recActive=false;$('micBtn').classList.remove('rec');$('micBtn').textContent='🎤 Parler';
+ recog.onend=()=>{recActive=false;$('micBtn').classList.remove('rec');if(!$('micBtn').disabled)$('micBtn').textContent='🎤 Parler';
   const t=finalTxt.trim();finalTxt='';
   if(t&&!S.ended&&!speaking)handleUtterance(t)};
  recog.onerror=e=>{recActive=false;$('micBtn').classList.remove('rec');$('micBtn').textContent='🎤 Parler';
-  if(e.error==='not-allowed'||e.error==='service-not-allowed'){toggleTxt(true);addBub('sys','Micro refusé — utilisez le mode clavier.')}};
+  if(e.error==='not-allowed'||e.error==='service-not-allowed')micFallback("Micro refusé. Autorisez le micro (icône 🔒 dans la barre d'adresse) ou répondez au clavier.");
+  else if(e.error==='network')micFallback("La reconnaissance vocale n'a pas pu joindre le service (connexion requise). Répondez au clavier.");
+  else if(e.error!=='no-speech'&&e.error!=='aborted')addBub('sys',"Micro interrompu — réappuyez sur « Parler » ou utilisez le clavier.")};
+ // Amorce l'autorisation du micro (déclenchée par le tap sur le numéro = geste utilisateur)
+ if(navigator.mediaDevices&&navigator.mediaDevices.getUserMedia){
+  navigator.mediaDevices.getUserMedia({audio:true}).then(s=>{micReady=true;s.getTracks().forEach(t=>t.stop())}).catch(()=>{micFallback("Micro non autorisé — répondez au clavier, ou autorisez le micro puis relancez.")});
+ }
 }
 function toggleMic(){if(!recog||S.ended||speaking)return;recActive?stopMic():startMic()}
-function startMic(){if(!recog||recActive||speaking||S.ended)return;try{recog.start();recActive=true;$('micBtn').classList.add('rec');$('micBtn').textContent='🔴 Je vous écoute — parlez';setOpState('vous écoute',false)}catch(e){}}
+function startMic(){if(!recog||recActive||speaking||S.ended||$('micBtn').disabled)return;try{recog.start();recActive=true;$('micBtn').classList.add('rec');$('micBtn').textContent='🔴 Je vous écoute — parlez';setOpState('vous écoute',false)}catch(e){}}
 function stopMic(){if(recog&&recActive){try{recog.stop()}catch(e){}}}
 function toggleTxt(on){const r=$('txtRow');if(on===true){r.classList.remove('hide')}else r.classList.toggle('hide')}
 function sendTxt(){const v=$('txtIn').value.trim();if(!v||S.ended||speaking)return;$('txtIn').value='';handleUtterance(v)}
@@ -358,6 +370,13 @@ function showHistory(){
  const h=JSON.parse(localStorage.getItem('lr_hist')||'[]');
  $('histList').innerHTML=h.length?h.map(r=>`<div class="hrow"><span>${r.p}</span><span style="color:var(--mut)">${r.s} · ${r.num} · ${r.dur} · ${r.d}</span><span class="sc2">${r.pct}/100</span></div>`).join(''):'<p style="color:var(--mut)">Aucun passage enregistré sur cet appareil.</p>';
  show('history');
+}
+function resetHistory(){
+ const h=JSON.parse(localStorage.getItem('lr_hist')||'[]');
+ if(!h.length){alert("L'historique est déjà vide.");return}
+ if(confirm('Supprimer définitivement les '+h.length+' passage(s) enregistré(s) sur cet appareil ? Cette action est irréversible.')){
+  localStorage.removeItem('lr_hist');showHistory();
+ }
 }
 function exportCSV(){
  const h=JSON.parse(localStorage.getItem('lr_hist')||'[]');if(!h.length)return;
