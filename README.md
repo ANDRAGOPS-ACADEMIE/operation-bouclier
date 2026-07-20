@@ -16,4 +16,17 @@ Simulateur vocal d'appel au 15 / 18 / 112 pour les apprenants en formation (SST,
 
 Simulateur : https://andragops-academie.github.io/operation-bouclier/la-ligne-rouge.html
 
+## MODE ARÈNE — Quiz sécurité en direct (multijoueur)
+
+Quiz collectif type « la salle répond en même temps » pour animer une session : `mode-arene.html`
+
+- Trois thèmes prêts : Secours SST 🩹, Incendie EPI 🔥, Sûreté 🛡️ (banque de questions à choix multiples, tirage aléatoire)
+- L'animateur crée une partie → un code à 4 chiffres s'affiche ; les apprenants rejoignent depuis leur téléphone et répondent en simultané ; classement en direct après chaque manche, podium final
+- Score au temps : bonne réponse rapide = plus de points (500 + bonus de rapidité)
+- **Mode démo** immédiat (joueurs simulés, un seul écran) pour tester sans rien configurer
+- **Vrai multijoueur cross-appareils** via Supabase Realtime Broadcast : coller l'URL + la clé anon du projet dans l'écran ⚙️ Connexion (aucune table à créer). Accès direct apprenant : `mode-arene.html?role=player&c=CODE`
+- 100 % navigateur ; la librairie Supabase est chargée depuis un CDN (nécessaire seulement pour le mode en direct)
+
+Arène : https://andragops-academie.github.io/operation-bouclier/mode-arene.html
+
 ANDRAGOPS Académie · Strasbourg · andragops-academie.fr
