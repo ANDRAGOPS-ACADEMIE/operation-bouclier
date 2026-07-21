@@ -220,7 +220,8 @@ function hideSplash(){$('splash').classList.add('out')}
 function show(id){['home','setup','lobby','play','scores','join','plobby'].forEach(x=>$(x)&&$(x).classList.add('hide'));$(id).classList.remove('hide')}
 
 /* ================= RÉGLAGES SUPABASE ================= */
-function loadCFG(){try{CFG=JSON.parse(localStorage.getItem('arene_cfg'))||{url:'',key:''}}catch(e){CFG={url:'',key:''}}}
+const DEFAULT_CFG={url:'https://eumviuptmyzgftrqpape.supabase.co',key:'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV1bXZpdXB0bXl6Z2Z0cnFwYXBlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY3MDYzNzEsImV4cCI6MjA5MjI4MjM3MX0._0yMVvgMRG1DfKj4vgqnyQC7IABHfvU2jiqTTKV4S4U'};
+function loadCFG(){try{const s=JSON.parse(localStorage.getItem('arene_cfg'));CFG=(s&&s.url&&s.key)?s:Object.assign({},DEFAULT_CFG)}catch(e){CFG=Object.assign({},DEFAULT_CFG)}}
 function connReady(){return !!(CFG.url&&CFG.key&&window.supabase)}
 function refreshConn(){
  const el=$('connState');
