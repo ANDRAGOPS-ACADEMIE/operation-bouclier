@@ -127,7 +127,8 @@ footer{text-align:center;color:#566377;font-size:11px;margin-top:18px}
 <div class="q" id="qText"></div>
 <div class="answers" id="answers"></div>
 <div class="answered hide" id="answeredBox"></div>
-<div class="status" id="playStatus"></div></div>
+<div class="status" id="playStatus"></div>
+<button id="qResend" class="big ghost hide" style="margin-top:6px" onclick="broadcastQuestion()">🔄 Renvoyer la question aux téléphones</button></div>
 
 <!-- CLASSEMENT (entre les manches / final) -->
 <div id="scores" class="card hide">
@@ -267,8 +268,12 @@ function createGame(){
 }
 function onHostMsg(m){
  if(m.t==='join'){if(!G.players[m.id]){G.players[m.id]={name:m.name,pts:0,last:0};renderPlayers();updateStart();send('roster',{names:Object.values(G.players).map(p=>p.name),code:G.code})}
-  send('accepted',{id:m.id});}
+  send('accepted',{id:m.id});
+  // Si une question est déjà en cours, on la (re)pousse aussitôt à ce joueur
+  if(G.phase==='question')broadcastQuestion();
+  else if(G.phase==='reveal'||G.phase==='end')send('reveal',{qi:G.qi,c:G.questions[G.qi]?G.questions[G.qi].c:-1,board:boardData()});}
  else if(m.t==='answer'){recordAnswer(m.id,m.choice,m.ms)}
+ else if(m.t==='hello'){send('accepted',{id:m.id});if(G.phase==='question')broadcastQuestion();}
 }
 function renderPlayers(){
  const w=$('players');const ps=Object.values(G.players);
@@ -289,11 +294,13 @@ function nextQuestion(){
  const q=G.questions[G.qi];
  Object.values(G.players).forEach(p=>p.answered=false);
  G.phase='question';
- if(live)send('question',{qi:G.qi,q:q.q,a:q.a,tQ:G.tQ,total:G.questions.length});
+ if(live){G._curQ={qi:G.qi,q:q.q,a:q.a,tQ:G.tQ,total:G.questions.length};broadcastQuestion();startQRebroadcast();}
  hostRenderQuestion(q);
  if(!live)scheduleBots(q);
  startQTimer();
 }
+function broadcastQuestion(){if(live&&G._curQ)send('question',G._curQ)}
+function startQRebroadcast(){clearInterval(G._qbc);G._qbc=setInterval(()=>{if(G.phase==='question')broadcastQuestion();else clearInterval(G._qbc)},1500)}
 function hostRenderQuestion(q){
  renderPills();$('answeredBox').classList.add('hide');
  $('qText').textContent=q.q;
@@ -301,6 +308,7 @@ function hostRenderQuestion(q){
  q.a.forEach((txt,i)=>{const b=document.createElement('button');b.className='ans a'+i;b.disabled=true;b.innerHTML=`<span class="sym">${'ABCD'[i]}</span> ${esc(txt)}`;b.id='ans'+i;w.appendChild(b)});
  $('answeredBox').classList.remove('hide');updateAnsweredCount();
  $('playStatus').textContent=live?'Les apprenants répondent sur leur téléphone…':'Joueurs simulés en train de répondre…';
+ $('qResend').classList.toggle('hide',!live);
  show('play');
 }
 function renderPills(){const w=$('pills');w.innerHTML='';for(let i=0;i<G.questions.length;i++){const s=document.createElement('span');s.className='pill'+(i<=G.qi?' on':'');w.appendChild(s)}}
@@ -342,7 +350,7 @@ let endSoonT=null;
 function endQuestionSoon(){if(endSoonT)return;endSoonT=setTimeout(()=>{endSoonT=null;if(G.phase==='question'&&role==='host')endQuestion()},700)}
 function endQuestion(){
  if(G.phase!=='question')return;G.phase='reveal';
- clearInterval(qTimer);clearBots();if(endSoonT){clearTimeout(endSoonT);endSoonT=null}
+ clearInterval(qTimer);clearBots();clearInterval(G._qbc);if(endSoonT){clearTimeout(endSoonT);endSoonT=null}
  $('chrono').classList.add('hide');
  const q=G.questions[G.qi];
  if(live)send('reveal',{qi:G.qi,c:q.c,board:boardData()});
@@ -401,7 +409,10 @@ function onPlayerMsg(m){
  else if(m.t==='roster'){/* could show count */}
 }
 function playerQuestion(m){
+ if(G._shownQ===m.qi)return;            // déjà affichée (renvoi de l'animateur) : ne pas réinitialiser
+ G._shownQ=m.qi;
  answeredThisQ=false;G.phase='question';G.qi=m.qi;G.tQ=m.tQ;G.questions=G.questions||[];
+ $('qResend')&&$('qResend').classList.add('hide');
  renderPillsN(m.qi,m.total);
  $('qText').textContent=m.q;
  const w=$('answers');w.innerHTML='';
